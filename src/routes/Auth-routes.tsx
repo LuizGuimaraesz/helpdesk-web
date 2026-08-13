@@ -7,11 +7,10 @@ export function AuthRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AuthLayout />}>
-        <Route index element={<Navigate to="/login" replace />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="cadastro" element={<RegisterPage />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/signup" element={<RegisterPage />} />
       </Route>
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
