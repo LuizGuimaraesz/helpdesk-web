@@ -5,6 +5,7 @@ import { FormField } from "../components/FormField";
 import { api } from "../services/api";
 import { z, ZodError } from "zod";
 import { AxiosError } from "axios";
+import { useAuth } from "../hooks/useAuth";
 
 const signInSchema = z.object({
   email: z.email("Informe um e-mail valido.").trim(),
@@ -29,6 +30,8 @@ const initialState: SignInState = {
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const auth = useAuth();
+
   const [state, formAction, isLoading] = useActionState(
     loginAction,
     initialState,
@@ -43,10 +46,13 @@ export function LoginPage() {
     try {
       const data = signInSchema.parse(fields);
 
-      await api.post("/sessions", data);
+      const response = await api.post("/sessions", data);
+
+      auth.save(response.data);
 
       return initialState;
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error);
       if (error instanceof ZodError) {
         return { message: error.issues[0].message, fields };
       }
