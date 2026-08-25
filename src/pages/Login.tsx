@@ -51,6 +51,7 @@ export function LoginPage() {
       auth.save(response.data);
 
       alert("Login efetuado com sucesso!");
+      navigate("/tickets");
 
       return initialState;
     } catch (error: any) {
