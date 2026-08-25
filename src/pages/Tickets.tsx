@@ -22,13 +22,12 @@ export function TicketsPage() {
           title: ticket.title,
           service: ticket.initialService.title,
           total: formatAmount(ticket.initialService.amount),
-          client: ticket.clientId,
-          technician: ticket.technicianId ?? "Não atribuído",
+          client: ticket.client.name,
+          technician: ticket.technician?.name ?? "Sem técnico",
           status: ticket.status,
         })),
       );
     } catch (error) {
-
       if (error instanceof AxiosError) {
         return alert(
           error.response?.data?.error ??

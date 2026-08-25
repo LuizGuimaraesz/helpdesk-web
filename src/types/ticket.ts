@@ -17,8 +17,17 @@ export type TicketApi = {
   updatedAt: string;
   title: string;
   status: TicketStatus;
-  clientId: string;
-  technicianId: string | null;
+
+  client: {
+    id: string;
+    name: string;
+  };
+
+  technician: {
+    id: string;
+    name: string;
+  } | null;
+
   initialService: {
     title: string;
     amount: string;
