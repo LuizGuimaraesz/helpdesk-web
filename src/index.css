@@ -10,6 +10,15 @@
   --color-border: #e3e5e8;
   --color-placeholder: #858b99;
   --color-brand: #2e3da3;
+  --color-brand-base: #5165e1;
+  --color-brand-light: #8996eb;
+  --color-status-open: #cc3d6a;
+  --color-status-open-background: rgb(204 61 106 / 20%);
+  --color-status-progress: #355ec5;
+  --color-status-progress-background: rgb(53 94 197 / 20%);
+  --color-status-closed: #508b26;
+  --color-status-closed-background: rgb(80 139 38 / 20%);
+  --color-feedback-error: #ef4444;
   --color-secondary-hover: #d8dbe0;
 }
 
