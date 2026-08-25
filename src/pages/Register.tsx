@@ -1,7 +1,7 @@
 import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/Button";
-import { FormField } from "../components/FormField";
+import { Button } from "../components/login/register/Button";
+import { FormField } from "../components/login/register/FormField";
 import { api } from "../services/api";
 import { z, ZodError } from "zod";
 import { AxiosError } from "axios";
@@ -120,10 +120,14 @@ export function RegisterPage() {
         </div>
 
         {state.message && (
-          <p className="text-sm font-medium text-red-500">{state.message}</p>
+          <p className="text-feedback-error text-sm font-medium">
+            {state.message}
+          </p>
         )}
 
-        <Button type="submit">Cadastrar</Button>
+        <Button type="submit" isLoading={isLoading}>
+          Cadastrar
+        </Button>
       </div>
 
       <div className="border-border flex w-full flex-col gap-6 rounded-[10px] border border-solid p-7">

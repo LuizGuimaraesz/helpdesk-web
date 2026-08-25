@@ -1,4 +1,4 @@
-import { classMerge } from "../utils/classMerge";
+import { classMerge } from "../../../utils/classMerge";
 import type { ButtonHTMLAttributes } from "react";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {

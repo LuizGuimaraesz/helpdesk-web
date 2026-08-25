@@ -1,7 +1,7 @@
 import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/Button";
-import { FormField } from "../components/FormField";
+import { Button } from "../components/login/register/Button";
+import { FormField } from "../components/login/register/FormField";
 import { api } from "../services/api";
 import { z, ZodError } from "zod";
 import { AxiosError } from "axios";

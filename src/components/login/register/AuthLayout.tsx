@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import NavHeader from "../assets/NavHeader.svg";
+import NavHeader from "../../../assets/NavHeader.svg";
 
 export function AuthLayout() {
   return (
