@@ -6,10 +6,12 @@ import { useAuth } from "../hooks/useAuth";
 import { formatAmount } from "../utils/formatAmount";
 import { formatDate } from "../utils/formatDate";
 import { getTickets } from "../services/tickets";
+import { useNavigate } from "react-router-dom";
 
 export function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const { isLoading, session } = useAuth();
+  const navigate = useNavigate();
 
   async function loadTickets() {
     try {
@@ -60,7 +62,10 @@ export function TicketsPage() {
         Chamados
       </h1>
 
-      <TicketsList tickets={tickets} />
+      <TicketsList
+        tickets={tickets}
+        onEditTicket={(ticket) => navigate(`/tickets/${ticket.id}`)}
+      />
     </section>
   );
 }

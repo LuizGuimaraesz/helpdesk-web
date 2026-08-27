@@ -37,3 +37,27 @@ export type TicketApi = {
 export type TicketsResponse = {
   tickets: TicketApi[];
 };
+
+export type TicketAdditionalService = {
+  id: string;
+  title: string;
+  amount: string;
+};
+
+export type TicketDetails = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  client: string;
+  technician: {
+    name: string;
+    email: string;
+  };
+  baseAmount: string;
+  additionalServices: TicketAdditionalService[];
+  totalAmount: string;
+  status: TicketStatus;
+};
