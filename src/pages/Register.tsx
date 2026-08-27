@@ -2,7 +2,7 @@ import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/login/register/Button";
 import { FormField } from "../components/login/register/FormField";
-import { api } from "../services/api";
+import { createUser } from "../services/users";
 import { z, ZodError } from "zod";
 import { AxiosError } from "axios";
 
@@ -48,7 +48,7 @@ export function RegisterPage() {
     try {
       const data = signUpSchema.parse(fields);
 
-      await api.post("/users", data);
+      await createUser(data);
 
       alert("Cadastro efetuado com sucesso!");
 

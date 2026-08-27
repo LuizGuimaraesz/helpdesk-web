@@ -2,7 +2,7 @@ import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/login/register/Button";
 import { FormField } from "../components/login/register/FormField";
-import { api } from "../services/api";
+import { createSession } from "../services/sessions";
 import { z, ZodError } from "zod";
 import { AxiosError } from "axios";
 import { useAuth } from "../hooks/useAuth";
@@ -46,9 +46,9 @@ export function LoginPage() {
     try {
       const data = signInSchema.parse(fields);
 
-      const response = await api.post("/sessions", data);
+      const session = await createSession(data);
 
-      auth.save(response.data);
+      auth.save(session);
 
       alert("Login efetuado com sucesso!");
       navigate("/tickets");

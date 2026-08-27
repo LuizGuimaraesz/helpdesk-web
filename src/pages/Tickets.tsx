@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { api } from "../services/api";
 import { TicketsList } from "../components/tickets/TicketsList";
-import type { TicketsResponse, Ticket } from "../types/ticket";
+import type { Ticket } from "../types/ticket";
 import { AxiosError } from "axios";
 import { useAuth } from "../hooks/useAuth";
 import { formatAmount } from "../utils/formatAmount";
 import { formatDate } from "../utils/formatDate";
+import { getTickets } from "../services/tickets";
 
 export function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -13,10 +13,10 @@ export function TicketsPage() {
 
   async function loadTickets() {
     try {
-      const response = await api.get<TicketsResponse>("/tickets");
+      const data = await getTickets();
 
       setTickets(
-        response.data.tickets.map((ticket) => ({
+        data.tickets.map((ticket) => ({
           id: String(ticket.number).padStart(5, "0"),
           updatedAt: formatDate(ticket.updatedAt),
           title: ticket.title,
@@ -39,6 +39,7 @@ export function TicketsPage() {
       alert("Não foi possivel carregar");
     }
   }
+
   useEffect(() => {
     if (isLoading || !session) {
       return;
