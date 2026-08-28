@@ -6,7 +6,7 @@ import { TicketActions } from "../components/tickets/TicketActions";
 import { TicketCostsCard } from "../components/tickets/TicketCostCard";
 import { TicketDetailsCard } from "../components/tickets/TicketDetailsCard";
 import { useAuth } from "../hooks/useAuth";
-import { getTicket } from "../services/tickets";
+import { getTicket, updateTicketStatus } from "../services/tickets";
 import type { TicketApi, TicketDetails, TicketStatus } from "../types/ticket";
 import { formatAmount } from "../utils/formatAmount";
 import { formatDate } from "../utils/formatDate";
@@ -38,6 +38,7 @@ export function TicketByIdPage() {
   const { ticketId } = useParams<{ ticketId: string }>();
   const { isLoading: isAuthLoading, session } = useAuth();
   const [ticket, setTicket] = useState<TicketDetails | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   async function loadTicket(id: string) {
     try {
@@ -57,10 +58,31 @@ export function TicketByIdPage() {
     }
   }
 
-  function handleChangeStatus(status: TicketStatus) {
-    setTicket((currentTicket) =>
-      currentTicket ? { ...currentTicket, status } : currentTicket,
-    );
+  async function handleChangeStatus(status: TicketStatus) {
+    if (!ticket) {
+      return;
+    }
+
+    try {
+      setIsUpdatingStatus(true);
+      await updateTicketStatus(ticket.id, status);
+
+      setTicket((currentTicket) =>
+        currentTicket ? { ...currentTicket, status } : currentTicket,
+      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(
+          error.response?.data?.error ??
+            error.response?.data?.message ??
+            "Falha ao atualizar o status do chamado.",
+        );
+      } else {
+        alert("Não foi possível atualizar o status do chamado.");
+      }
+    } finally {
+      setIsUpdatingStatus(false);
+    }
   }
 
   useEffect(() => {
@@ -97,6 +119,7 @@ export function TicketByIdPage() {
         {ticket && (
           <TicketActions
             status={ticket.status}
+            isUpdating={isUpdatingStatus}
             onChangeStatus={handleChangeStatus}
           />
         )}

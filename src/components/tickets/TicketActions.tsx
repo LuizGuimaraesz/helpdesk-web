@@ -3,18 +3,20 @@ import type { TicketStatus } from "../../types/ticket";
 
 type TicketActionsProps = {
   status: TicketStatus;
-  onChangeStatus: (status: TicketStatus) => void;
+  isUpdating: boolean;
+  onChangeStatus: (status: TicketStatus) => Promise<void>;
 };
 
 export function TicketActions({
   status,
+  isUpdating,
   onChangeStatus,
 }: TicketActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <button
         type="button"
-        disabled={status !== "open"}
+        disabled={status !== "open" || isUpdating}
         onClick={() => onChangeStatus("in_progress")}
         className="bg-border text-foreground hover:bg-secondary-hover focus-visible:outline-brand flex h-9 cursor-pointer items-center justify-center gap-2 rounded-[5px] px-4 text-xs leading-[1.4] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
@@ -24,7 +26,7 @@ export function TicketActions({
 
       <button
         type="button"
-        disabled={status === "closed"}
+        disabled={status === "closed" || isUpdating}
         onClick={() => onChangeStatus("closed")}
         className="bg-border text-foreground hover:bg-secondary-hover focus-visible:outline-brand flex h-9 cursor-pointer items-center justify-center gap-2 rounded-[5px] px-4 text-xs leading-[1.4] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
