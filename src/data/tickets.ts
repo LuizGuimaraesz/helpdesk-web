@@ -3,6 +3,7 @@ import type { Ticket } from "../types/ticket";
 export const ticketsMock: Ticket[] = [
   {
     id: "00003",
+    number: "00003",
     updatedAt: "13/04/25 20:56",
     title: "Rede lenta",
     service: "Instalação de Rede",
@@ -13,6 +14,7 @@ export const ticketsMock: Ticket[] = [
   },
   {
     id: "00004",
+    number: "00004",
     updatedAt: "12/04/25 15:20",
     title: "Backup não está funcionando",
     service: "Recuperação de Dados",
@@ -23,6 +25,7 @@ export const ticketsMock: Ticket[] = [
   },
   {
     id: "00001",
+    number: "00001",
     updatedAt: "12/04/25 09:01",
     title: "Computador não liga",
     service: "Manutenção de Hardware",
@@ -33,6 +36,7 @@ export const ticketsMock: Ticket[] = [
   },
   {
     id: "00002",
+    number: "00002",
     updatedAt: "10/04/25 10:15",
     title: "Instalação de software de gestão",
     service: "Suporte de Software",
@@ -43,6 +47,7 @@ export const ticketsMock: Ticket[] = [
   },
   {
     id: "00005",
+    number: "00005",
     updatedAt: "11/04/25 15:16",
     title: "Meu fone não conecta no computador",
     service: "Suporte de Software",

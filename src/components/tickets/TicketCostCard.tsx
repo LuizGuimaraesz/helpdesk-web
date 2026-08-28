@@ -66,15 +66,21 @@ export function TicketCostsCard({ ticket }: TicketCostsCardProps) {
               Adicionais
             </dt>
             <dd className="m-0">
-              <dl className="flex flex-col gap-1.5">
-                {ticket.additionalServices.map((service) => (
-                  <AmountRow
-                    key={service.id}
-                    label={service.title}
-                    amount={service.amount}
-                  />
-                ))}
-              </dl>
+              {ticket.additionalServices.length > 0 ? (
+                <dl className="flex flex-col gap-1.5">
+                  {ticket.additionalServices.map((service) => (
+                    <AmountRow
+                      key={service.id}
+                      label={service.title}
+                      amount={service.amount}
+                    />
+                  ))}
+                </dl>
+              ) : (
+                <span className="text-muted text-xs leading-[1.4]">
+                  Nenhum adicional
+                </span>
+              )}
             </dd>
           </div>
 

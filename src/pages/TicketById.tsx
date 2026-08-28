@@ -1,15 +1,75 @@
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { Link, useParams } from "react-router-dom";
 import { TicketActions } from "../components/tickets/TicketActions";
 import { TicketCostsCard } from "../components/tickets/TicketCostCard";
 import { TicketDetailsCard } from "../components/tickets/TicketDetailsCard";
-import { ticketDetailsMock } from "../data/ticketDetails";
-import type { TicketStatus } from "../types/ticket";
+import { useAuth } from "../hooks/useAuth";
+import { getTicket } from "../services/tickets";
+import type { TicketApi, TicketDetails, TicketStatus } from "../types/ticket";
+import { formatAmount } from "../utils/formatAmount";
+import { formatDate } from "../utils/formatDate";
+
+function toTicketDetails(ticket: TicketApi): TicketDetails {
+  const baseAmount = formatAmount(ticket.initialService.amount);
+
+  return {
+    id: ticket.id,
+    number: String(ticket.number).padStart(5, "0"),
+    title: ticket.title,
+    description: ticket.description,
+    category: ticket.initialService.title,
+    createdAt: formatDate(ticket.createdAt),
+    updatedAt: formatDate(ticket.updatedAt),
+    client: ticket.client.name,
+    technician: {
+      name: ticket.technician?.name ?? "Sem técnico responsável",
+      email: ticket.technician?.email ?? "Não atribuído",
+    },
+    baseAmount,
+    additionalServices: [],
+    totalAmount: baseAmount,
+    status: ticket.status,
+  };
+}
 
 export function TicketByIdPage() {
-  const [status, setStatus] = useState<TicketStatus>(ticketDetailsMock.status);
-  const ticket = { ...ticketDetailsMock, status };
+  const { ticketId } = useParams<{ ticketId: string }>();
+  const { isLoading: isAuthLoading, session } = useAuth();
+  const [ticket, setTicket] = useState<TicketDetails | null>(null);
+
+  async function loadTicket(id: string) {
+    try {
+      const data = await getTicket(id);
+
+      setTicket(toTicketDetails(data.ticket));
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return alert(
+          error.response?.data?.error ??
+            error.response?.data?.message ??
+            "Falha ao carregar o chamado.",
+        );
+      } else {
+        alert("Não foi possível carregar o chamado.");
+      }
+    }
+  }
+
+  function handleChangeStatus(status: TicketStatus) {
+    setTicket((currentTicket) =>
+      currentTicket ? { ...currentTicket, status } : currentTicket,
+    );
+  }
+
+  useEffect(() => {
+    if (isAuthLoading || !session || !ticketId) {
+      return;
+    }
+
+    loadTicket(ticketId);
+  }, [isAuthLoading, session, ticketId]);
 
   return (
     <section
@@ -34,13 +94,20 @@ export function TicketByIdPage() {
           </h1>
         </div>
 
-        <TicketActions status={status} onChangeStatus={setStatus} />
+        {ticket && (
+          <TicketActions
+            status={ticket.status}
+            onChangeStatus={handleChangeStatus}
+          />
+        )}
       </header>
 
-      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1.62fr)_minmax(245px,1fr)]">
-        <TicketDetailsCard ticket={ticket} />
-        <TicketCostsCard ticket={ticket} />
-      </div>
+      {ticket && (
+        <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1.62fr)_minmax(245px,1fr)]">
+          <TicketDetailsCard ticket={ticket} />
+          <TicketCostsCard ticket={ticket} />
+        </div>
+      )}
     </section>
   );
 }

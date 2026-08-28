@@ -15,7 +15,7 @@ export function TicketRow({ onEdit, ticket }: TicketRowProps) {
         {ticket.updatedAt}
       </td>
       <td className="text-foreground px-3 text-xs leading-[1.4] font-bold whitespace-nowrap">
-        {ticket.id}
+        {ticket.number}
       </td>
       <td className="text-foreground min-w-0 px-3 leading-[1.4]">
         <p className="truncate text-sm font-bold">{ticket.title}</p>
@@ -36,7 +36,6 @@ export function TicketRow({ onEdit, ticket }: TicketRowProps) {
       <td className="px-3 text-center">
         <button
           type="button"
-          aria-label={`Editar chamado ${ticket.id}`}
           className="bg-border hover:bg-secondary-hover focus-visible:outline-brand mx-auto flex size-7 cursor-pointer items-center justify-center overflow-hidden rounded-[5px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
           onClick={onEdit ? () => onEdit(ticket) : undefined}
         >

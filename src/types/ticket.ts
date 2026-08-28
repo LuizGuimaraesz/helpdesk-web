@@ -2,6 +2,7 @@ export type TicketStatus = "open" | "in_progress" | "closed";
 
 export type Ticket = {
   id: string;
+  number: string;
   updatedAt: string;
   title: string;
   service: string;
@@ -14,9 +15,11 @@ export type Ticket = {
 export type TicketApi = {
   id: string;
   number: number;
-  updatedAt: string;
   title: string;
+  description: string;
   status: TicketStatus;
+  createdAt: string;
+  updatedAt: string;
 
   client: {
     id: string;
@@ -26,9 +29,11 @@ export type TicketApi = {
   technician: {
     id: string;
     name: string;
+    email: string;
   } | null;
 
   initialService: {
+    serviceId: string;
     title: string;
     amount: string;
   };
@@ -36,6 +41,10 @@ export type TicketApi = {
 
 export type TicketsResponse = {
   tickets: TicketApi[];
+};
+
+export type TicketResponse = {
+  ticket: TicketApi;
 };
 
 export type TicketAdditionalService = {
@@ -46,6 +55,7 @@ export type TicketAdditionalService = {
 
 export type TicketDetails = {
   id: string;
+  number: string;
   title: string;
   description: string;
   category: string;

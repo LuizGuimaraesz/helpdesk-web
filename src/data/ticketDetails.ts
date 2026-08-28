@@ -1,7 +1,8 @@
 import type { TicketDetails } from "../types/ticket";
 
 export const ticketDetailsMock: TicketDetails = {
-  id: "00004",
+  id: "mock-ticket-id",
+  number: "00004",
   title: "Backup não está funcionando",
   description:
     "O sistema de backup automático parou de funcionar. Última execução bem-sucedida foi há uma semana.",

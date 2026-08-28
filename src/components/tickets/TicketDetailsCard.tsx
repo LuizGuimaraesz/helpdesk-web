@@ -25,7 +25,7 @@ export function TicketDetailsCard({ ticket }: TicketDetailsCardProps) {
     <article className="border-border min-w-0 rounded-[10px] border p-5 sm:p-6">
       <header className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-muted text-xs leading-[1.4]">{ticket.id}</p>
+          <p className="text-muted text-xs leading-[1.4]">{ticket.number}</p>
           <h2 className="text-foreground mt-2 text-base leading-[1.4] font-bold">
             {ticket.title}
           </h2>

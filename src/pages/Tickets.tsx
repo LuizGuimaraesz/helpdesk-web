@@ -19,7 +19,8 @@ export function TicketsPage() {
 
       setTickets(
         data.tickets.map((ticket) => ({
-          id: String(ticket.number).padStart(5, "0"),
+          id: ticket.id,
+          number: String(ticket.number).padStart(5, "0"),
           updatedAt: formatDate(ticket.updatedAt),
           title: ticket.title,
           service: ticket.initialService.title,
