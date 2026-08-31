@@ -4,3 +4,7 @@ export type Service = {
   amount: string;
   active: boolean;
 };
+
+export type ServicesResponse = {
+  services: Service[];
+};
