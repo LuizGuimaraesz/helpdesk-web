@@ -1,6 +1,6 @@
 import type { TicketDetails } from "../../types/ticket";
 import { TicketStatus } from "./TicketStatus";
-import { UserInfo } from "./UserInfo";
+import { UserInfo } from "../ui/UserInfo";
 
 type TicketDetailsCardProps = {
   ticket: TicketDetails;

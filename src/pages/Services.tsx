@@ -1,18 +1,67 @@
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import { ServicesList } from "../components/services/ServicesList";
-import { servicesMock } from "../data/services";
-import { updateServiceStatus } from "../services/services";
+import { ServiceForm } from "../components/services/ServiceForm";
+import { Button } from "../components/ui/Button";
+import type { Service } from "../types/service";
+import { getServices, updateServiceStatus } from "../services/services";
+import { useAuth } from "../hooks/useAuth";
 
 export function ServicesPage() {
-  const [services, setServices] = useState(servicesMock);
+  const [services, setServices] = useState<Service[]>([]);
   const [updatingServiceId, setUpdatingServiceId] = useState<string | null>(
     null,
   );
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const { isLoading, session } = useAuth();
+
+  function handleOpenCreateServiceModal() {
+    setSelectedService(null);
+    setIsServiceModalOpen(true);
+  }
+
+  function handleOpenEditServiceModal(service: Service) {
+    setSelectedService(service);
+    setIsServiceModalOpen(true);
+  }
+
+  function handleCloseServiceModal() {
+    setIsServiceModalOpen(false);
+    setSelectedService(null);
+  }
+
+  async function loadServices() {
+    try {
+      const data = await getServices();
+
+      setServices(data.services);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(
+          error.response?.data?.error ??
+            error.response?.data?.message ??
+            "Falha ao carregar os serviços.",
+        );
+        return;
+      }
+
+      alert("Não foi possível carregar os serviços.");
+    }
+  }
+
+  useEffect(() => {
+    if (isLoading || !session) {
+      return;
+    }
+
+    loadServices();
+  }, [isLoading, session]);
 
   async function handleToggleServiceStatus(serviceId: string) {
-    const service = services.find((currentService) => currentService.id === serviceId);
+    const service = services.find(
+      (currentService) => currentService.id === serviceId,
+    );
 
     if (!service) {
       return;
@@ -57,21 +106,22 @@ export function ServicesPage() {
           Serviços
         </h1>
 
-        <button
-          type="button"
-          className="bg-foreground text-surface hover:bg-page focus-visible:outline-brand inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-[5px] px-4 text-sm leading-[1.4] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
-          <Plus aria-hidden="true" className="size-4" />
-          Novo
-        </button>
+        <Button onClick={handleOpenCreateServiceModal} />
       </header>
 
       <ServicesList
         services={services}
         updatingServiceId={updatingServiceId}
+        onEditService={handleOpenEditServiceModal}
         onToggleServiceStatus={(service) =>
           handleToggleServiceStatus(service.id)
         }
+      />
+
+      <ServiceForm
+        isOpen={isServiceModalOpen}
+        service={selectedService}
+        onClose={handleCloseServiceModal}
       />
     </section>
   );
