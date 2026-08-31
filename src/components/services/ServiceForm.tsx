@@ -24,7 +24,8 @@ type ServiceFormProps = {
   service?: Service | null;
   onClose: () => void;
   onCreate: (title: string, amount: number) => Promise<void>;
-  isCreating?: boolean;
+  onUpdate: (id: string, title: string, amount: number) => Promise<void>;
+  isSaving?: boolean;
 };
 
 export function ServiceForm({
@@ -32,7 +33,8 @@ export function ServiceForm({
   service = null,
   onClose,
   onCreate,
-  isCreating = false,
+  onUpdate,
+  isSaving = false,
 }: ServiceFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -49,14 +51,15 @@ export function ServiceForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (service) {
-      return;
-    }
-
     const parsedAmount = Number(amount.replace(",", "."));
 
     if (!title.trim() || !Number.isFinite(parsedAmount) || parsedAmount < 0) {
       alert("Informe um título e um valor válido para o serviço.");
+      return;
+    }
+
+    if (service) {
+      await onUpdate(service.id, title.trim(), parsedAmount);
       return;
     }
 
@@ -92,7 +95,7 @@ export function ServiceForm({
 
         <button
           type="submit"
-          disabled={isCreating || Boolean(service)}
+          disabled={isSaving}
           className="bg-foreground text-surface hover:bg-page focus-visible:outline-brand mt-[54px] flex h-[42px] w-full cursor-pointer items-center justify-center rounded-[4.5px] text-[13.5px] leading-[1.4] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           Salvar

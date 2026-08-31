@@ -7,6 +7,7 @@ import type { Service } from "../types/service";
 import {
   createService,
   getServices,
+  updateService,
   updateServiceStatus,
 } from "../services/services";
 import { useAuth } from "../hooks/useAuth";
@@ -18,7 +19,7 @@ export function ServicesPage() {
   );
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [isCreatingService, setIsCreatingService] = useState(false);
+  const [isSavingService, setIsSavingService] = useState(false);
   const { isLoading, session } = useAuth();
 
   function handleOpenCreateServiceModal() {
@@ -100,7 +101,7 @@ export function ServicesPage() {
 
   async function handleCreateService(title: string, amount: number) {
     try {
-      setIsCreatingService(true);
+      setIsSavingService(true);
       await createService(title, amount);
 
       handleCloseServiceModal();
@@ -110,13 +111,39 @@ export function ServicesPage() {
         alert(
           error.response?.data?.error ??
             error.response?.data?.message ??
-            "Falha ao criar o servi\u00e7o.",
+            "Falha ao criar o serviço.",
         );
       } else {
-        alert("N\u00e3o foi poss\u00edvel criar o servi\u00e7o.");
+        alert("Não foi possível criar o serviço.");
       }
     } finally {
-      setIsCreatingService(false);
+      setIsSavingService(false);
+    }
+  }
+
+  async function handleUpdateService(
+    id: string,
+    title: string,
+    amount: number,
+  ) {
+    try {
+      setIsSavingService(true);
+      await updateService(id, title, amount);
+
+      handleCloseServiceModal();
+      await loadServices();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(
+          error.response?.data?.error ??
+            error.response?.data?.message ??
+            "Falha ao atualizar o serviço.",
+        );
+      } else {
+        alert("Não foi possível atualizar o serviço.");
+      }
+    } finally {
+      setIsSavingService(false);
     }
   }
 
@@ -150,7 +177,8 @@ export function ServicesPage() {
         service={selectedService}
         onClose={handleCloseServiceModal}
         onCreate={handleCreateService}
-        isCreating={isCreatingService}
+        onUpdate={handleUpdateService}
+        isSaving={isSavingService}
       />
     </section>
   );

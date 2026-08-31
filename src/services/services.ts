@@ -18,5 +18,5 @@ export async function updateServiceStatus(id: string, active: boolean) {
 }
 
 export async function updateService(id: string, title: string, amount: number) {
-  await api.patch(`/services/${id}/`, { title, amount });
+  await api.patch(`/services/${id}`, { title, amount });
 }
