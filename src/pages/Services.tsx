@@ -4,7 +4,11 @@ import { ServicesList } from "../components/services/ServicesList";
 import { ServiceForm } from "../components/services/ServiceForm";
 import { Button } from "../components/ui/Button";
 import type { Service } from "../types/service";
-import { getServices, updateServiceStatus } from "../services/services";
+import {
+  createService,
+  getServices,
+  updateServiceStatus,
+} from "../services/services";
 import { useAuth } from "../hooks/useAuth";
 
 export function ServicesPage() {
@@ -14,6 +18,7 @@ export function ServicesPage() {
   );
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [isCreatingService, setIsCreatingService] = useState(false);
   const { isLoading, session } = useAuth();
 
   function handleOpenCreateServiceModal() {
@@ -93,6 +98,28 @@ export function ServicesPage() {
     }
   }
 
+  async function handleCreateService(title: string, amount: number) {
+    try {
+      setIsCreatingService(true);
+      await createService(title, amount);
+
+      handleCloseServiceModal();
+      await loadServices();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(
+          error.response?.data?.error ??
+            error.response?.data?.message ??
+            "Falha ao criar o servi\u00e7o.",
+        );
+      } else {
+        alert("N\u00e3o foi poss\u00edvel criar o servi\u00e7o.");
+      }
+    } finally {
+      setIsCreatingService(false);
+    }
+  }
+
   return (
     <section
       aria-labelledby="services-title"
@@ -122,6 +149,8 @@ export function ServicesPage() {
         isOpen={isServiceModalOpen}
         service={selectedService}
         onClose={handleCloseServiceModal}
+        onCreate={handleCreateService}
+        isCreating={isCreatingService}
       />
     </section>
   );
