@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import { ServicesList } from "../components/services/ServicesList";
 import { ServiceForm } from "../components/services/ServiceForm";
 import { Button } from "../components/ui/Button";
+import { ListHeader } from "../components/ui/ListHeader";
 import type { Service } from "../types/service";
 import {
   createService,
@@ -11,6 +11,7 @@ import {
   updateServiceStatus,
 } from "../services/services";
 import { useAuth } from "../hooks/useAuth";
+import { getErrorMessage } from "../utils/getErrorMessage";
 
 export function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
@@ -43,26 +44,9 @@ export function ServicesPage() {
 
       setServices(data.services);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        alert(
-          error.response?.data?.error ??
-            error.response?.data?.message ??
-            "Falha ao carregar os serviços.",
-        );
-        return;
-      }
-
-      alert("Não foi possível carregar os serviços.");
+      alert(getErrorMessage(error, "Falha ao carregar os serviços."));
     }
   }
-
-  useEffect(() => {
-    if (isLoading || !session) {
-      return;
-    }
-
-    loadServices();
-  }, [isLoading, session]);
 
   async function handleToggleServiceStatus(serviceId: string) {
     const service = services.find(
@@ -85,15 +69,7 @@ export function ServicesPage() {
         ),
       );
     } catch (error) {
-      if (error instanceof AxiosError) {
-        alert(
-          error.response?.data?.error ??
-            error.response?.data?.message ??
-            "Falha ao atualizar o status do serviço.",
-        );
-      } else {
-        alert("Não foi possível atualizar o status do serviço.");
-      }
+      alert(getErrorMessage(error, "Falha ao atualizar o status do serviço."));
     } finally {
       setUpdatingServiceId(null);
     }
@@ -106,16 +82,6 @@ export function ServicesPage() {
 
       handleCloseServiceModal();
       await loadServices();
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        alert(
-          error.response?.data?.error ??
-            error.response?.data?.message ??
-            "Falha ao criar o serviço.",
-        );
-      } else {
-        alert("Não foi possível criar o serviço.");
-      }
     } finally {
       setIsSavingService(false);
     }
@@ -132,36 +98,27 @@ export function ServicesPage() {
 
       handleCloseServiceModal();
       await loadServices();
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        alert(
-          error.response?.data?.error ??
-            error.response?.data?.message ??
-            "Falha ao atualizar o serviço.",
-        );
-      } else {
-        alert("Não foi possível atualizar o serviço.");
-      }
     } finally {
       setIsSavingService(false);
     }
   }
+
+  useEffect(() => {
+    if (isLoading || !session) {
+      return;
+    }
+
+    loadServices();
+  }, [isLoading, session]);
 
   return (
     <section
       aria-labelledby="services-title"
       className="flex min-w-0 flex-col gap-6"
     >
-      <header className="flex items-center justify-between gap-4">
-        <h1
-          id="services-title"
-          className="text-brand text-2xl leading-[1.4] font-bold"
-        >
-          Serviços
-        </h1>
-
-        <Button onClick={handleOpenCreateServiceModal} />
-      </header>
+      <ListHeader title="Serviços" titleId="services-title">
+        <Button variant="plus" onClick={handleOpenCreateServiceModal} />
+      </ListHeader>
 
       <ServicesList
         services={services}

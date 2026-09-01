@@ -1,10 +1,10 @@
 import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/login/register/Button";
-import { FormField } from "../components/login/register/FormField";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
 import { createUser } from "../services/users";
-import { z, ZodError } from "zod";
-import { AxiosError } from "axios";
+import { z } from "zod";
+import { getErrorMessage } from "../utils/getErrorMessage";
 
 const signUpSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome."),
@@ -53,20 +53,12 @@ export function RegisterPage() {
       alert("Cadastro efetuado com sucesso!");
 
       return initialState;
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
-      if (error instanceof ZodError) {
-        return { message: error.issues[0].message, fields };
-      }
-
-      if (error instanceof AxiosError) {
-        return {
-          message: error.response?.data.error ?? "Nao foi possivel entrar.",
-          fields,
-        };
-      }
-
-      return { message: "Ocorreu um erro inesperado.", fields };
+      return {
+        message: getErrorMessage(error, "Não foi possível criar sua conta."),
+        fields,
+      };
     }
   }
 
@@ -90,7 +82,8 @@ export function RegisterPage() {
         </div>
 
         <div className="flex w-full flex-col gap-4">
-          <FormField
+          <Input
+            variant="auth"
             id="name"
             name="name"
             type="text"
@@ -99,7 +92,8 @@ export function RegisterPage() {
             defaultValue={state.fields.name}
             required
           />
-          <FormField
+          <Input
+            variant="auth"
             id="register-email"
             name="email"
             type="email"
@@ -108,7 +102,8 @@ export function RegisterPage() {
             defaultValue={state.fields.email}
             required
           />
-          <FormField
+          <Input
+            variant="auth"
             id="register-password"
             name="password"
             type="password"

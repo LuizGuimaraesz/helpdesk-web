@@ -1,7 +1,23 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { z } from "zod";
 import type { Service } from "../../types/service";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import { Input } from "../ui/Input";
 import { Modal } from "../ui/Modal";
+
+const serviceSchema = z.object({
+  title: z.string().trim().min(1, "Informe o título do serviço."),
+  amount: z
+    .string()
+    .min(1, "Informe um valor válido para o serviço.")
+    .transform((value) => Number(value.replace(",", ".")))
+    .pipe(
+      z
+        .number()
+        .finite("Informe um valor válido para o serviço.")
+        .min(0, "Informe um valor válido para o serviço."),
+    ),
+});
 
 function formatAmountInput(value: string) {
   const digits = value.replace(/\D/g, "");
@@ -38,6 +54,7 @@ export function ServiceForm({
 }: ServiceFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -46,24 +63,34 @@ export function ServiceForm({
 
     setTitle(service?.title ?? "");
     setAmount(service?.amount.replace(".", ",") ?? "");
+    setErrorMessage(null);
   }, [isOpen, service]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setErrorMessage(null);
 
-    const parsedAmount = Number(amount.replace(",", "."));
+    const result = serviceSchema.safeParse({ title, amount });
 
-    if (!title.trim() || !Number.isFinite(parsedAmount) || parsedAmount < 0) {
-      alert("Informe um título e um valor válido para o serviço.");
+    if (!result.success) {
+      setErrorMessage(
+        getErrorMessage(result.error, "Informe os dados do serviço."),
+      );
       return;
     }
 
-    if (service) {
-      await onUpdate(service.id, title.trim(), parsedAmount);
-      return;
-    }
+    try {
+      if (service) {
+        await onUpdate(service.id, result.data.title, result.data.amount);
+        return;
+      }
 
-    await onCreate(title.trim(), parsedAmount);
+      await onCreate(result.data.title, result.data.amount);
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, "Não foi possível salvar o serviço."),
+      );
+    }
   }
 
   return (
@@ -92,6 +119,12 @@ export function ServiceForm({
           className="text-lg placeholder:text-sm"
           required
         />
+
+        {errorMessage && (
+          <p className="text-feedback-error mt-3 text-sm font-medium">
+            {errorMessage}
+          </p>
+        )}
 
         <button
           type="submit"

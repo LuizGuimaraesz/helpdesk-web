@@ -1,6 +1,6 @@
 import { Route } from "react-router-dom";
 import { AppLayout } from "../components/layout/AppLayout";
-import { AdminPlaceholder } from "../pages/AdminPlaceholder";
+import { ListHeader } from "../components/ui/ListHeader";
 import { ServicesPage } from "../pages/Services";
 import { TicketByIdPage } from "../pages/TicketById";
 import { TicketsPage } from "../pages/Tickets";
@@ -11,9 +11,9 @@ export const adminRoute = (
     <Route path="/tickets/:ticketId" element={<TicketByIdPage />} />
     <Route
       path="/technicians"
-      element={<AdminPlaceholder title="Técnicos" />}
+      element={<ListHeader title="Técnicos" />}
     />
-    <Route path="/clients" element={<AdminPlaceholder title="Clientes" />} />
+    <Route path="/clients" element={<ListHeader title="Clientes" />} />
     <Route path="/services" element={<ServicesPage />} />
   </Route>
 );

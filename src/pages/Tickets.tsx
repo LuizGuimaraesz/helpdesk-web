@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { TicketsList } from "../components/tickets/TicketsList";
 import type { Ticket } from "../types/ticket";
-import { AxiosError } from "axios";
 import { useAuth } from "../hooks/useAuth";
 import { formatAmount } from "../utils/formatAmount";
 import { formatDate } from "../utils/formatDate";
 import { getTickets } from "../services/tickets";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "../utils/getErrorMessage";
+import { ListHeader } from "../components/ui/ListHeader";
 
 export function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -31,15 +32,7 @@ export function TicketsPage() {
         })),
       );
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return alert(
-          error.response?.data?.error ??
-            error.response?.data?.message ??
-            "Falha ao carregar os chamados.",
-        );
-      }
-
-      alert("Não foi possivel carregar");
+      alert(getErrorMessage(error, "Falha ao carregar os chamados."));
     }
   }
 
@@ -56,12 +49,7 @@ export function TicketsPage() {
       aria-labelledby="tickets-title"
       className="flex min-w-0 flex-col gap-6"
     >
-      <h1
-        id="tickets-title"
-        className="text-brand text-2xl leading-[1.4] font-bold"
-      >
-        Chamados
-      </h1>
+      <ListHeader title="Chamados" titleId="tickets-title" />
 
       <TicketsList
         tickets={tickets}

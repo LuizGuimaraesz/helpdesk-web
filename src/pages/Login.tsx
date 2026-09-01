@@ -1,11 +1,11 @@
 import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/login/register/Button";
-import { FormField } from "../components/login/register/FormField";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
 import { createSession } from "../services/sessions";
-import { z, ZodError } from "zod";
-import { AxiosError } from "axios";
+import { z } from "zod";
 import { useAuth } from "../hooks/useAuth";
+import { getErrorMessage } from "../utils/getErrorMessage";
 
 const signInSchema = z.object({
   email: z.email("Informe um e-mail valido.").trim(),
@@ -54,20 +54,12 @@ export function LoginPage() {
       navigate("/tickets");
 
       return initialState;
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
-      if (error instanceof ZodError) {
-        return { message: error.issues[0].message, fields };
-      }
-
-      if (error instanceof AxiosError) {
-        return {
-          message: error.response?.data.error ?? "Nao foi possivel entrar.",
-          fields,
-        };
-      }
-
-      return { message: "Ocorreu um erro inesperado.", fields };
+      return {
+        message: getErrorMessage(error, "Não foi possível entrar."),
+        fields,
+      };
     }
   }
 
@@ -91,7 +83,8 @@ export function LoginPage() {
         </div>
 
         <div className="flex w-full flex-col gap-4">
-          <FormField
+          <Input
+            variant="auth"
             id="email"
             name="email"
             type="email"
@@ -100,7 +93,8 @@ export function LoginPage() {
             defaultValue={state.fields.email}
             required
           />
-          <FormField
+          <Input
+            variant="auth"
             id="password"
             name="password"
             type="password"

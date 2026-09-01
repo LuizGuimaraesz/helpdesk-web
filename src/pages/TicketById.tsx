@@ -1,6 +1,5 @@
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import { Link, useParams } from "react-router-dom";
 import { TicketActions } from "../components/tickets/TicketActions";
 import { TicketCostsCard } from "../components/tickets/TicketCostCard";
@@ -10,6 +9,7 @@ import { getTicket, updateTicketStatus } from "../services/tickets";
 import type { TicketApi, TicketDetails, TicketStatus } from "../types/ticket";
 import { formatAmount } from "../utils/formatAmount";
 import { formatDate } from "../utils/formatDate";
+import { getErrorMessage } from "../utils/getErrorMessage";
 
 function toTicketDetails(ticket: TicketApi): TicketDetails {
   const baseAmount = formatAmount(ticket.initialService.amount);
@@ -46,15 +46,7 @@ export function TicketByIdPage() {
 
       setTicket(toTicketDetails(data.ticket));
     } catch (error) {
-      if (error instanceof AxiosError) {
-        return alert(
-          error.response?.data?.error ??
-            error.response?.data?.message ??
-            "Falha ao carregar o chamado.",
-        );
-      } else {
-        alert("Não foi possível carregar o chamado.");
-      }
+      alert(getErrorMessage(error, "Falha ao carregar o chamado."));
     }
   }
 
@@ -71,15 +63,9 @@ export function TicketByIdPage() {
         currentTicket ? { ...currentTicket, status } : currentTicket,
       );
     } catch (error) {
-      if (error instanceof AxiosError) {
-        alert(
-          error.response?.data?.error ??
-            error.response?.data?.message ??
-            "Falha ao atualizar o status do chamado.",
-        );
-      } else {
-        alert("Não foi possível atualizar o status do chamado.");
-      }
+      alert(
+        getErrorMessage(error, "Falha ao atualizar o status do chamado."),
+      );
     } finally {
       setIsUpdatingStatus(false);
     }
