@@ -1,10 +1,11 @@
 import { classMerge } from "../../utils/classMerge";
 import type { ButtonHTMLAttributes } from "react";
-import { Plus } from "lucide-react";
+import { Plus, type LucideIcon } from "lucide-react";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   isLoading?: boolean;
-  variant?: "black" | "white" | "plus";
+  variant?: "black" | "white" | "plus" | "secondary";
+  icon?: LucideIcon;
 };
 
 const variants = {
@@ -12,6 +13,8 @@ const variants = {
     black: "bg-foreground text-surface hover:bg-page",
     white: "bg-border text-foreground hover:bg-secondary-hover",
     plus: "bg-foreground text-surface hover:bg-page w-auto gap-2",
+    secondary:
+      "bg-border text-foreground hover:bg-secondary-hover h-9 w-auto gap-2 px-4 text-xs",
   },
 };
 
@@ -21,6 +24,7 @@ export function Button({
   isLoading = false,
   type = "button",
   variant = "black",
+  icon: Icon,
   ...props
 }: ButtonProps) {
   return (
@@ -39,7 +43,12 @@ export function Button({
           Novo
         </>
       ) : (
-        children
+        <>
+          {variant === "secondary" && Icon && (
+            <Icon aria-hidden="true" className="text-muted size-4" />
+          )}
+          {children}
+        </>
       )}
     </button>
   );

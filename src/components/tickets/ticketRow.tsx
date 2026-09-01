@@ -1,6 +1,6 @@
-import { PencilLine } from "lucide-react";
 import type { Ticket } from "../../types/ticket";
 import { TicketStatus } from "./TicketStatus";
+import { EditButton } from "../ui/EditButton";
 import { UserInfo } from "../ui/UserInfo";
 
 type TicketRowProps = {
@@ -34,13 +34,10 @@ export function TicketRow({ onEdit, ticket }: TicketRowProps) {
         <TicketStatus status={ticket.status} />
       </td>
       <td className="px-3 text-center">
-        <button
-          type="button"
-          className="bg-border hover:bg-secondary-hover focus-visible:outline-brand mx-auto flex size-7 cursor-pointer items-center justify-center overflow-hidden rounded-[5px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+        <EditButton
+          aria-label={`Editar o chamado ${ticket.number}`}
           onClick={onEdit ? () => onEdit(ticket) : undefined}
-        >
-          <PencilLine aria-hidden="true" className="size-3.5" />
-        </button>
+        />
       </td>
     </tr>
   );

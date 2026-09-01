@@ -1,6 +1,7 @@
-import { Ban, CircleCheck, PencilLine } from "lucide-react";
+import { Ban, CircleCheck } from "lucide-react";
 import type { Service } from "../../types/service";
 import { formatAmount } from "../../utils/formatAmount";
+import { EditButton } from "../ui/EditButton";
 import { ServiceStatus } from "./ServiceStatus";
 
 type ServiceRowProps = {
@@ -50,14 +51,10 @@ export function ServiceRow({
       </td>
 
       <td className="px-3 text-center">
-        <button
-          type="button"
-          className="bg-border hover:bg-secondary-hover focus-visible:outline-brand mx-auto flex size-7 cursor-pointer items-center justify-center overflow-hidden rounded-[5px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+        <EditButton
           aria-label={`Editar o serviço ${service.title}`}
           onClick={onEdit ? () => onEdit(service) : undefined}
-        >
-          <PencilLine aria-hidden="true" className="size-3.5" />
-        </button>
+        />
       </td>
     </tr>
   );
