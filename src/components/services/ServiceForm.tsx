@@ -4,6 +4,7 @@ import type { Service } from "../../types/service";
 import { getErrorMessage } from "../../utils/getErrorMessage";
 import { Input } from "../ui/Input";
 import { Modal } from "../ui/Modal";
+import { Button } from "../ui/Button";
 
 const serviceSchema = z.object({
   title: z.string().trim().min(1, "Informe o título do serviço."),
@@ -27,9 +28,7 @@ function formatAmountInput(value: string) {
   }
 
   const amountInCents = digits.padStart(3, "0");
-  const integerPart = amountInCents
-    .slice(0, -2)
-    .replace(/^0+(?=\d)/, "");
+  const integerPart = amountInCents.slice(0, -2).replace(/^0+(?=\d)/, "");
   const decimalPart = amountInCents.slice(-2);
 
   return `${integerPart},${decimalPart}`;
@@ -99,40 +98,42 @@ export function ServiceForm({
       title={service ? "Serviço" : "Cadastro de serviço"}
       onClose={onClose}
     >
-      <form onSubmit={handleSubmit} className="p-6">
-        <Input
-          label={"Título"}
-          placeholder={"Nome do serviço"}
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          containerClassName="pt-0"
-          required
-        />
+      <form onSubmit={handleSubmit}>
+        <div className="p-6 pb-[34px]">
+          <Input
+            label={"Título"}
+            placeholder={"Nome do serviço"}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            containerClassName="pt-0"
+            required
+          />
 
-        <Input
-          label="Valor"
-          placeholder="0,00"
-          value={amount}
-          onChange={(event) => setAmount(formatAmountInput(event.target.value))}
-          inputMode="numeric"
-          prefix="R$"
-          className="text-lg placeholder:text-sm"
-          required
-        />
+          <Input
+            label="Valor"
+            placeholder="0,00"
+            value={amount}
+            onChange={(event) =>
+              setAmount(formatAmountInput(event.target.value))
+            }
+            inputMode="numeric"
+            prefix="R$"
+            className="text-lg placeholder:text-sm"
+            required
+          />
 
-        {errorMessage && (
-          <p className="text-feedback-error mt-3 text-sm font-medium">
-            {errorMessage}
-          </p>
-        )}
+          {errorMessage && (
+            <p className="text-feedback-error mt-3 text-sm font-medium">
+              {errorMessage}
+            </p>
+          )}
+        </div>
 
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="bg-foreground text-surface hover:bg-page focus-visible:outline-brand mt-[54px] flex h-[42px] w-full cursor-pointer items-center justify-center rounded-[4.5px] text-[13.5px] leading-[1.4] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
-          Salvar
-        </button>
+        <footer className="border-border border-t p-6">
+          <Button type="submit" isLoading={isSaving}>
+            Salvar
+          </Button>
+        </footer>
       </form>
     </Modal>
   );

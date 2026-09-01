@@ -18,3 +18,11 @@ export async function getUsers(role: "client" | "technician") {
 
   return response.data;
 }
+
+export async function updateUser(id: string, name: string, email: string) {
+  await api.patch(`/users/${id}`, { name, email });
+}
+
+export async function deleteUser(id: string) {
+  await api.delete(`/users/${id}`);
+}
