@@ -1,6 +1,7 @@
 import { Route } from "react-router-dom";
 import { AppLayout } from "../components/layout/AppLayout";
 import { ListHeader } from "../components/ui/ListHeader";
+import { ClientsPage } from "../pages/Clients";
 import { ServicesPage } from "../pages/Services";
 import { TicketByIdPage } from "../pages/TicketById";
 import { TicketsPage } from "../pages/Tickets";
@@ -13,7 +14,7 @@ export const adminRoute = (
       path="/technicians"
       element={<ListHeader title="Técnicos" />}
     />
-    <Route path="/clients" element={<ListHeader title="Clientes" />} />
+    <Route path="/clients" element={<ClientsPage />} />
     <Route path="/services" element={<ServicesPage />} />
   </Route>
 );
