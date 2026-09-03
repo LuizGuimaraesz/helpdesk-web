@@ -16,13 +16,17 @@ export function UserInfo({
   showName = true,
   avatarSize = "small",
 }: UserInfoProps) {
+  const shouldShowAvatar = !name.startsWith("Sem técnico");
+
   return (
     <div className="flex min-w-0 items-center gap-2">
-      <span
-        className={`bg-brand text-surface flex shrink-0 items-center justify-center rounded-full leading-[1.4] ${avatarSizes[avatarSize]}`}
-      >
-        {getInitials(name)}
-      </span>
+      {shouldShowAvatar && (
+        <span
+          className={`bg-brand text-surface flex shrink-0 items-center justify-center rounded-full leading-[1.4] ${avatarSizes[avatarSize]}`}
+        >
+          {getInitials(name)}
+        </span>
+      )}
       {showName && (
         <span className="text-foreground min-w-0 flex-1 truncate text-sm leading-[1.4]">
           {name}
