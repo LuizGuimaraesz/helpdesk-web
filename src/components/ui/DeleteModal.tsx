@@ -1,58 +1,63 @@
 import { useEffect, useState } from "react";
-import type { User } from "../../types/user";
 import { getErrorMessage } from "../../utils/getErrorMessage";
-import { Button } from "../ui/Button";
-import { Modal } from "../ui/Modal";
+import { Button } from "./Button";
+import { Modal } from "./Modal";
 
-type DeleteClientModalProps = {
-  client?: User | null;
+type DeletableItem = {
+  id: string;
+  name: string;
+};
+
+type DeleteModalProps = {
+  item?: DeletableItem | null;
+  title: string;
+  warningMessage: string;
+  deleteErrorMessage?: string;
   isDeleting?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onDelete: (id: string) => Promise<void>;
 };
 
-export function DeleteClientModal({
-  client = null,
+export function DeleteModal({
+  item = null,
+  title,
+  warningMessage,
+  deleteErrorMessage = "Não foi possível excluir este item.",
   isDeleting = false,
   isOpen,
   onClose,
   onDelete,
-}: DeleteClientModalProps) {
+}: DeleteModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setErrorMessage(null);
     }
-  }, [client, isOpen]);
+  }, [item, isOpen]);
 
   async function handleDelete() {
-    if (!client) {
+    if (!item) {
       return;
     }
 
     setErrorMessage(null);
 
     try {
-      await onDelete(client.id);
+      await onDelete(item.id);
     } catch (error) {
-      setErrorMessage(
-        getErrorMessage(error, "Não foi possível excluir o cliente."),
-      );
+      setErrorMessage(getErrorMessage(error, deleteErrorMessage));
     }
   }
 
   return (
-    <Modal isOpen={isOpen} title="Excluir cliente" onClose={onClose}>
+    <Modal isOpen={isOpen} title={title} onClose={onClose}>
       <div className="p-6 text-base leading-[1.4]">
         <p className="text-foreground">
-          Deseja realmente excluir <strong>{client?.name}</strong>?
+          Deseja realmente excluir <strong>{item?.name}</strong>?
         </p>
-        <p className="text-foreground mt-6">
-          Ao excluir, todos os chamados deste cliente serão removidos e esta
-          ação não poderá ser desfeita.
-        </p>
+        <p className="text-foreground mt-6">{warningMessage}</p>
 
         {errorMessage && (
           <p className="text-feedback-error mt-4 text-sm font-medium">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ClientForm } from "../components/clients/ClientForm";
 import { ClientsList } from "../components/clients/ClientsList";
-import { DeleteClientModal } from "../components/clients/DeleteClientModal";
+import { DeleteModal } from "../components/ui/DeleteModal";
 import { ListHeader } from "../components/ui/ListHeader";
 import { useAuth } from "../hooks/useAuth";
 import { deleteUser, getUsers, updateUser } from "../services/users";
@@ -100,8 +100,11 @@ export function ClientsPage() {
         onUpdate={handleUpdateClient}
       />
 
-      <DeleteClientModal
-        client={selectedClient}
+      <DeleteModal
+        item={selectedClient}
+        title="Excluir cliente"
+        warningMessage="Ao excluir, todos os chamados deste cliente serão removidos e esta ação não poderá ser desfeita."
+        deleteErrorMessage="Não foi possível excluir o cliente."
         isOpen={activeModal === "delete"}
         isDeleting={isDeletingClient}
         onClose={handleCloseClientModal}
