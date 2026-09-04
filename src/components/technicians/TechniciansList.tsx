@@ -15,7 +15,7 @@ export function TechniciansList({
   return (
     <div className="border-border w-full min-w-0 max-w-full overflow-x-auto rounded-[10px] border">
       <table className="w-full min-w-[680px] table-fixed border-collapse">
-        <caption className="sr-only">{"Lista de t\u00e9cnicos"}</caption>
+        <caption className="sr-only">Lista de técnicos</caption>
 
         <colgroup>
           <col className="w-[37%]" />
@@ -36,7 +36,7 @@ export function TechniciansList({
               Disponibilidade
             </th>
             <th scope="col">
-              <span className="sr-only">{"A\u00e7\u00f5es"}</span>
+              <span className="sr-only">Ações</span>
             </th>
           </tr>
         </thead>

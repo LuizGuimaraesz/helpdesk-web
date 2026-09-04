@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { UsersResponse } from "../types/user";
+import type { User, UsersResponse } from "../types/user";
 
 type CreateUserParams = {
   name: string;
@@ -17,6 +17,12 @@ export async function getUsers(role: "client" | "technician") {
   });
 
   return response.data;
+}
+
+export async function getUserById(id: string) {
+  const response = await api.get<{ user: User }>(`/users/${id}`);
+
+  return response.data.user;
 }
 
 export async function updateUser(id: string, name: string, email: string) {

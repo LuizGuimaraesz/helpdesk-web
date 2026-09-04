@@ -32,11 +32,11 @@ export function TechnicianRow({
         <div className="flex items-center justify-end gap-2">
           <EditButton
             variant="delete"
-            aria-label={`Excluir o t\u00e9cnico ${technician.name}`}
+            aria-label={`Excluir o técnico ${technician.name}`}
             onClick={onDelete ? () => onDelete(technician) : undefined}
           />
           <EditButton
-            aria-label={`Editar o t\u00e9cnico ${technician.name}`}
+            aria-label={`Editar o técnico ${technician.name}`}
             onClick={onEdit ? () => onEdit(technician) : undefined}
           />
         </div>

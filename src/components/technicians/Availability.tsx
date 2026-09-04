@@ -80,7 +80,7 @@ export function Availability({ hours }: AvailabilityProps) {
   if (hours.length === 0) {
     return (
       <span className="text-placeholder text-xs whitespace-nowrap">
-        {"Sem horários"}
+        Sem horários
       </span>
     );
   }

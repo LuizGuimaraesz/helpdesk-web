@@ -2,6 +2,7 @@ import { getInitials } from "../../utils/getInitials";
 
 type UserInfoProps = {
   name: string;
+  avatarUrl?: string | null;
   showName?: boolean;
   avatarSize?: "small" | "large";
 };
@@ -13,6 +14,7 @@ const avatarSizes = {
 
 export function UserInfo({
   name,
+  avatarUrl = null,
   showName = true,
   avatarSize = "small",
 }: UserInfoProps) {
@@ -21,11 +23,19 @@ export function UserInfo({
   return (
     <div className="flex min-w-0 items-center gap-2">
       {shouldShowAvatar && (
-        <span
-          className={`bg-brand text-surface flex shrink-0 items-center justify-center rounded-full leading-[1.4] ${avatarSizes[avatarSize]}`}
-        >
-          {getInitials(name)}
-        </span>
+        avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt={showName ? "" : `Foto de ${name}`}
+            className={`shrink-0 rounded-full object-cover ${avatarSizes[avatarSize]}`}
+          />
+        ) : (
+          <span
+            className={`bg-brand text-surface flex shrink-0 items-center justify-center rounded-full leading-[1.4] ${avatarSizes[avatarSize]}`}
+          >
+            {getInitials(name)}
+          </span>
+        )
       )}
       {showName && (
         <span className="text-foreground min-w-0 flex-1 truncate text-sm leading-[1.4]">
