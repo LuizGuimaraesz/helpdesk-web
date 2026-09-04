@@ -37,7 +37,7 @@ export function AvailabilitySelector({
   }
 
   return (
-    <section className="border-border min-w-0 rounded-[10px] border p-5">
+    <section className="border-border h-fit min-w-0 self-start rounded-[10px] border p-5">
       <h2 className="text-foreground text-base leading-[1.4] font-bold">
         Horários de atendimento
       </h2>

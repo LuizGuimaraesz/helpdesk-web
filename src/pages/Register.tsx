@@ -111,7 +111,7 @@ export function RegisterPage() {
             placeholder="Digite sua senha"
             required
           />
-          <p className="text-sm text-placeholder italic">Mínimo de 6 dígitos</p>
+          <p className="text-placeholder text-xs italic">Mínimo de 6 dígitos</p>
         </div>
 
         {state.message && (

@@ -96,7 +96,7 @@ export function TechnicianForm({
     <form
       onSubmit={handleSubmit}
       aria-labelledby="technician-form-title"
-      className="flex min-w-0 flex-col"
+      className="mx-auto flex w-full max-w-[900px] min-w-0 flex-col"
     >
       <button
         type="button"
@@ -122,7 +122,7 @@ export function TechnicianForm({
         </div>
       </ListHeader>
 
-      <div className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[236px_minmax(0,1fr)]">
+      <div className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[296px_minmax(0,1fr)]">
         <section className="border-border rounded-[10px] border p-5">
           <h2 className="text-foreground text-base leading-[1.4] font-bold">
             Dados pessoais
@@ -146,7 +146,7 @@ export function TechnicianForm({
             <Input
               id="technician-name"
               label="Nome"
-              placeholder="Nome do técnico"
+              placeholder="Nome completo"
               value={name}
               onChange={(event) => setName(event.target.value)}
               containerClassName="pt-0 pb-3"
@@ -157,7 +157,7 @@ export function TechnicianForm({
               id="technician-email"
               label="E-mail"
               type="email"
-              placeholder="E-mail do técnico"
+              placeholder="exemplo@email.com"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
@@ -169,13 +169,13 @@ export function TechnicianForm({
                   id="technician-password"
                   label="Senha"
                   type="password"
-                  placeholder="Crie uma senha"
+                  placeholder="Defina a senha se acesso"
                   autoComplete="new-password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   required
                 />
-                <p className="text-placeholder mt-2 text-sm italic">
+                <p className="text-placeholder mt-2 text-xs italic">
                   Mínimo de 6 dígitos
                 </p>
               </>
