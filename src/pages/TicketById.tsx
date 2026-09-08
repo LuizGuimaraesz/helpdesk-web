@@ -1,15 +1,15 @@
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { TicketActions } from "../../components/tickets/TicketActions";
-import { TicketCostsCard } from "../../components/tickets/TicketCostCard";
-import { TicketDetailsCard } from "../../components/tickets/TicketDetailsCard";
-import { useAuth } from "../../hooks/useAuth";
-import { getTicket, updateTicketStatus } from "../../services/tickets";
-import type { TicketApi, TicketDetails, TicketStatus } from "../../types/ticket";
-import { formatAmount } from "../../utils/formatAmount";
-import { formatDate } from "../../utils/formatDate";
-import { getErrorMessage } from "../../utils/getErrorMessage";
+import { TicketActions } from "../components/tickets/TicketActions";
+import { TicketCostsCard } from "../components/tickets/TicketCostCard";
+import { TicketDetailsCard } from "../components/tickets/TicketDetailsCard";
+import { useAuth } from "../hooks/useAuth";
+import { getTicket, updateTicketStatus } from "../services/tickets";
+import type { TicketApi, TicketDetails, TicketStatus } from "../types/ticket";
+import { formatAmount } from "../utils/formatAmount";
+import { formatDate } from "../utils/formatDate";
+import { getErrorMessage } from "../utils/getErrorMessage";
 
 function toTicketDetails(ticket: TicketApi): TicketDetails {
   const baseAmount = formatAmount(ticket.initialService.amount);
@@ -34,7 +34,15 @@ function toTicketDetails(ticket: TicketApi): TicketDetails {
   };
 }
 
-export function TicketByIdPage() {
+type TicketByIdPageProps = {
+  backTo?: string;
+  showActions?: boolean;
+};
+
+export function TicketByIdPage({
+  backTo = "/tickets",
+  showActions = true,
+}: TicketByIdPageProps) {
   const { ticketId } = useParams<{ ticketId: string }>();
   const { isLoading: isAuthLoading, session } = useAuth();
   const [ticket, setTicket] = useState<TicketDetails | null>(null);
@@ -87,7 +95,7 @@ export function TicketByIdPage() {
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div className="flex flex-col gap-3">
           <Link
-            to="/tickets"
+            to={backTo}
             className="text-muted hover:text-foreground focus-visible:outline-brand inline-flex w-fit items-center gap-2 text-xs leading-[1.4] transition-colors focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             <ArrowLeft aria-hidden="true" className="size-3.5" />
@@ -102,7 +110,7 @@ export function TicketByIdPage() {
           </h1>
         </div>
 
-        {ticket && (
+        {showActions && ticket && (
           <TicketActions
             status={ticket.status}
             isUpdating={isUpdatingStatus}

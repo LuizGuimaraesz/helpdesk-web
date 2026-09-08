@@ -3,10 +3,17 @@ import { TicketRow } from "./ticketRow";
 
 type TicketsListProps = {
   tickets: Ticket[];
-  onEditTicket?: (ticket: Ticket) => void;
+  onClickTicket?: (ticket: Ticket) => void;
+  actionVariant?: "edit" | "view";
 };
 
-export function TicketsList({ tickets, onEditTicket }: TicketsListProps) {
+export function TicketsList({
+  tickets,
+  onClickTicket,
+  actionVariant,
+}: TicketsListProps) {
+  const showAction = Boolean(onClickTicket || actionVariant);
+
   return (
     <div className="border-border w-full min-w-0 max-w-full overflow-x-auto rounded-[10px] border">
       <table className="w-full min-w-[1068px] table-fixed border-collapse">
@@ -19,7 +26,7 @@ export function TicketsList({ tickets, onEditTicket }: TicketsListProps) {
           <col className="w-40" />
           <col className="w-40" />
           <col className="w-[152px]" />
-          <col className="w-[52px]" />
+          {showAction && <col className="w-[52px]" />}
         </colgroup>
         <thead>
           <tr className="border-border text-placeholder h-12 border-b text-left text-sm leading-[1.4] font-bold">
@@ -44,14 +51,21 @@ export function TicketsList({ tickets, onEditTicket }: TicketsListProps) {
             <th scope="col" className="px-3">
               Status
             </th>
-            <th scope="col">
-              <span className="sr-only">Ação</span>
-            </th>
+            {showAction && (
+              <th scope="col">
+                <span className="sr-only">Ação</span>
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
           {tickets.map((ticket) => (
-            <TicketRow key={ticket.id} ticket={ticket} onEdit={onEditTicket} />
+            <TicketRow
+              key={ticket.id}
+              ticket={ticket}
+              onClickTicket={onClickTicket}
+              actionVariant={actionVariant}
+            />
           ))}
         </tbody>
       </table>

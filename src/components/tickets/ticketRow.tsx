@@ -4,11 +4,19 @@ import { EditButton } from "../ui/EditButton";
 import { UserInfo } from "../ui/UserInfo";
 
 type TicketRowProps = {
-  onEdit?: (ticket: Ticket) => void;
+  onClickTicket?: (ticket: Ticket) => void;
+  actionVariant?: "edit" | "view";
   ticket: Ticket;
 };
 
-export function TicketRow({ onEdit, ticket }: TicketRowProps) {
+export function TicketRow({
+  onClickTicket,
+  actionVariant,
+  ticket,
+}: TicketRowProps) {
+  const showAction = Boolean(onClickTicket || actionVariant);
+  const variant = actionVariant ?? "edit";
+
   return (
     <tr className="border-border h-16 border-b last:border-b-0">
       <td className="text-foreground px-3 text-xs leading-[1.4] whitespace-nowrap">
@@ -33,12 +41,15 @@ export function TicketRow({ onEdit, ticket }: TicketRowProps) {
       <td className="px-3">
         <TicketStatus status={ticket.status} />
       </td>
-      <td className="px-3 text-center">
-        <EditButton
-          aria-label={`Editar o chamado ${ticket.number}`}
-          onClick={onEdit ? () => onEdit(ticket) : undefined}
-        />
-      </td>
+      {showAction && (
+        <td className="px-3 text-center">
+          <EditButton
+            variant={variant}
+            aria-label={`${variant === "view" ? "Visualizar" : "Editar"} o chamado ${ticket.number}`}
+            onClick={onClickTicket ? () => onClickTicket(ticket) : undefined}
+          />
+        </td>
+      )}
     </tr>
   );
 }

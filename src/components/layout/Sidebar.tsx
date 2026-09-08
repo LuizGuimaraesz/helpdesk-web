@@ -1,25 +1,48 @@
 import logoSymbolBase from "../../assets/logo-symbol-base.svg";
 import logoSymbolDetail from "../../assets/logo-symbol-detail.svg";
-import { BriefcaseBusiness, ClipboardList, Users, Wrench } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  ClipboardList,
+  Plus,
+  Users,
+  Wrench,
+} from "lucide-react";
+import type { UserRole } from "../../types/user";
 import { NavItem } from "./NavItem";
 import { UserProfile } from "./UserProfile";
 
 type SidebarProps = {
-  role: string;
+  role: UserRole;
   user: {
     email: string;
     name: string;
   };
 };
 
-const navigation = [
+const adminNavigation = [
   { icon: ClipboardList, label: "Chamados", to: "/tickets" },
   { icon: Users, label: "Técnicos", to: "/technicians" },
   { icon: BriefcaseBusiness, label: "Clientes", to: "/clients" },
   { icon: Wrench, label: "Serviços", to: "/services" },
 ];
 
+const techNavigation = [
+  { icon: ClipboardList, label: "Meus chamados", to: "/tickets" },
+];
+
+const clientNavigation = [
+  { icon: ClipboardList, label: "Meus chamados", to: "/tickets" },
+  { icon: Plus, label: "Criar chamado", to: "/tickets/new" },
+];
+
 export function Sidebar({ role, user }: SidebarProps) {
+  const navigation =
+    role === "admin"
+      ? adminNavigation
+      : role === "technician"
+        ? techNavigation
+        : clientNavigation;
+
   return (
     <aside className="bg-page flex h-full w-[200px] shrink-0 flex-col">
       <header className="border-foreground flex w-full items-center gap-3 border-b px-5 py-6">
@@ -44,7 +67,7 @@ export function Sidebar({ role, user }: SidebarProps) {
         </div>
       </header>
 
-      <nav aria-label="Navegação administrativa" className="flex-1 px-4 py-5">
+      <nav aria-label="Navegação principal" className="flex-1 px-4 py-5">
         <div className="flex flex-col gap-1">
           {navigation.map((item) => (
             <NavItem key={item.to} {...item} />

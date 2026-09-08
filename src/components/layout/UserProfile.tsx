@@ -64,20 +64,20 @@ export function UserProfile({ email, name }: UserProfileProps) {
         <div
           role="menu"
           aria-label="Opções do perfil"
-          className="bg-page absolute bottom-0 left-[calc(100%+12px)] z-20 w-[248px] rounded-[10px] px-6 py-5 shadow-lg"
+          className="bg-page absolute bottom-4 left-[calc(100%+12px)] z-20 w-[238px] rounded-[10px] px-4 py-5 shadow-lg"
         >
           <p className="text-placeholder text-xs font-bold tracking-[0.6px] uppercase">
             Opções
           </p>
 
-          <div className="mt-5 flex flex-col gap-3">
+          <div className="mt-5 flex flex-col gap-1 ">
             <button
               type="button"
               role="menuitem"
               onClick={() => setIsOptionsOpen(false)}
-              className="text-surface hover:bg-foreground focus-visible:outline-brand flex w-full cursor-pointer items-center gap-3 rounded-[5px] px-1 py-2 text-left text-xl leading-[1.4] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="text-surface hover:bg-foreground focus-visible:outline-brand flex w-full cursor-pointer items-center gap-3 rounded-[5px] px-1 py-2 text-left text-lg leading-[1.4] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
             >
-              <CircleUserRound aria-hidden="true" className="size-6" />
+              <CircleUserRound aria-hidden="true" className="size-5" />
               Perfil
             </button>
 
@@ -85,9 +85,9 @@ export function UserProfile({ email, name }: UserProfileProps) {
               type="button"
               role="menuitem"
               onClick={handleLogout}
-              className="text-feedback-error hover:bg-foreground focus-visible:outline-feedback-error flex w-full cursor-pointer items-center gap-3 rounded-[5px] px-1 py-2 text-left text-xl leading-[1.4] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="text-feedback-error hover:bg-foreground focus-visible:outline-feedback-error flex w-full cursor-pointer items-center gap-3 rounded-[5px] px-1 py-2 text-left text-lg leading-[1.4] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
             >
-              <LogOut aria-hidden="true" className="size-6" />
+              <LogOut aria-hidden="true" className="size-5" />
               Sair
             </button>
           </div>

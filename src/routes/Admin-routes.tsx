@@ -5,15 +5,21 @@ import { EditTechnicianPage } from "../pages/admin/EditTechnician";
 import { NewTechnicianPage } from "../pages/admin/NewTechnician";
 import { ServicesPage } from "../pages/admin/Services";
 import { TechniciansPage } from "../pages/admin/Technicians";
-import { TicketByIdPage } from "../pages/admin/TicketById";
-import { TicketsPage } from "../pages/admin/Tickets";
+import { TicketByIdPage } from "../pages/TicketById";
+import { TicketsPage } from "../pages/Tickets";
 
 export function AdminRoutes() {
   return (
     <Routes>
     <Route element={<AppLayout />}>
-      <Route path="/tickets" element={<TicketsPage />} />
-      <Route path="/tickets/:ticketId" element={<TicketByIdPage />} />
+      <Route
+        path="/tickets"
+        element={<TicketsPage title="Chamados" actionVariant="edit" />}
+      />
+      <Route
+        path="/tickets/:ticketId"
+        element={<TicketByIdPage backTo="/tickets" showActions />}
+      />
       <Route path="/technicians" element={<TechniciansPage />} />
       <Route path="/technicians/new" element={<NewTechnicianPage />} />
       <Route path="/technicians/:id" element={<EditTechnicianPage />} />
