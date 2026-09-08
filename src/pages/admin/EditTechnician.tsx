@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   TechnicianForm,
   type TechnicianFormValues,
-} from "../components/technicians/TechnicianForm";
-import { useAuth } from "../hooks/useAuth";
-import { getUserById, updateUser } from "../services/users";
-import { updateTechnicianAvailabilities } from "../services/technicians";
-import type { User } from "../types/user";
-import { getErrorMessage } from "../utils/getErrorMessage";
+} from "../../components/technicians/TechnicianForm";
+import { useAuth } from "../../hooks/useAuth";
+import { getUserById, updateUser } from "../../services/users";
+import { updateTechnicianAvailabilities } from "../../services/technicians";
+import type { User } from "../../types/user";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 type Technician = Omit<User, "hours"> & {
   hours: string[];

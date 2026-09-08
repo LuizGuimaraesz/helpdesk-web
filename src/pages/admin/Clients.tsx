@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { ClientForm } from "../components/clients/ClientForm";
-import { ClientsList } from "../components/clients/ClientsList";
-import { DeleteModal } from "../components/ui/DeleteModal";
-import { ListHeader } from "../components/ui/ListHeader";
-import { useAuth } from "../hooks/useAuth";
-import { deleteUser, getUsers, updateUser } from "../services/users";
-import type { User } from "../types/user";
-import { getErrorMessage } from "../utils/getErrorMessage";
+import { ClientForm } from "../../components/clients/ClientForm";
+import { ClientsList } from "../../components/clients/ClientsList";
+import { DeleteModal } from "../../components/ui/DeleteModal";
+import { ListHeader } from "../../components/ui/ListHeader";
+import { useAuth } from "../../hooks/useAuth";
+import { deleteUser, getUsers, updateUser } from "../../services/users";
+import type { User } from "../../types/user";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 type ClientModal = "edit" | "delete" | null;
 

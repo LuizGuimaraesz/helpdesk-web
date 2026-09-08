@@ -1,4 +1,5 @@
 import { api } from "./api";
+import type { UserAPIResponse } from "../types/user";
 
 type CreateSession = {
   email: string;

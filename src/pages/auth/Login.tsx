@@ -1,11 +1,11 @@
 import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
-import { createSession } from "../services/sessions";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
+import { createSession } from "../../services/sessions";
 import { z } from "zod";
-import { useAuth } from "../hooks/useAuth";
-import { getErrorMessage } from "../utils/getErrorMessage";
+import { useAuth } from "../../hooks/useAuth";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 const signInSchema = z.object({
   email: z.email("Informe um e-mail valido.").trim(),
@@ -49,9 +49,6 @@ export function LoginPage() {
       const session = await createSession(data);
 
       auth.save(session);
-
-      alert("Login efetuado com sucesso!");
-      navigate("/tickets");
 
       return initialState;
     } catch (error) {

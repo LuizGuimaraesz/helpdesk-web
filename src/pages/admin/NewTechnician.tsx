@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import {
   TechnicianForm,
   type TechnicianFormValues,
-} from "../components/technicians/TechnicianForm";
-import { createTechnician } from "../services/technicians";
-import { getErrorMessage } from "../utils/getErrorMessage";
+} from "../../components/technicians/TechnicianForm";
+import { createTechnician } from "../../services/technicians";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 export function NewTechnicianPage() {
   const navigate = useNavigate();

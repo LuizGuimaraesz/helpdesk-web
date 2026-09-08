@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TechniciansList } from "../components/technicians/TechniciansList";
-import { Button } from "../components/ui/Button";
-import { DeleteModal } from "../components/ui/DeleteModal";
-import { ListHeader } from "../components/ui/ListHeader";
-import { useAuth } from "../hooks/useAuth";
-import { deleteUser, getUsers } from "../services/users";
-import type { User } from "../types/user";
-import { getErrorMessage } from "../utils/getErrorMessage";
+import { TechniciansList } from "../../components/technicians/TechniciansList";
+import { Button } from "../../components/ui/Button";
+import { DeleteModal } from "../../components/ui/DeleteModal";
+import { ListHeader } from "../../components/ui/ListHeader";
+import { useAuth } from "../../hooks/useAuth";
+import { deleteUser, getUsers } from "../../services/users";
+import type { User } from "../../types/user";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 export function TechniciansPage() {
   const navigate = useNavigate();

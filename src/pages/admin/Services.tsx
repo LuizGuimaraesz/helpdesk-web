@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { ServicesList } from "../components/services/ServicesList";
-import { ServiceForm } from "../components/services/ServiceForm";
-import { Button } from "../components/ui/Button";
-import { ListHeader } from "../components/ui/ListHeader";
-import type { Service } from "../types/service";
+import { ServicesList } from "../../components/services/ServicesList";
+import { ServiceForm } from "../../components/services/ServiceForm";
+import { Button } from "../../components/ui/Button";
+import { ListHeader } from "../../components/ui/ListHeader";
+import type { Service } from "../../types/service";
 import {
   createService,
   getServices,
   updateService,
   updateServiceStatus,
-} from "../services/services";
-import { useAuth } from "../hooks/useAuth";
-import { getErrorMessage } from "../utils/getErrorMessage";
+} from "../../services/services";
+import { useAuth } from "../../hooks/useAuth";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 export function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { TicketsList } from "../components/tickets/TicketsList";
-import type { Ticket } from "../types/ticket";
-import { useAuth } from "../hooks/useAuth";
-import { formatAmount } from "../utils/formatAmount";
-import { formatDate } from "../utils/formatDate";
-import { getTickets } from "../services/tickets";
+import { TicketsList } from "../../components/tickets/TicketsList";
+import type { Ticket } from "../../types/ticket";
+import { useAuth } from "../../hooks/useAuth";
+import { formatAmount } from "../../utils/formatAmount";
+import { formatDate } from "../../utils/formatDate";
+import { getTickets } from "../../services/tickets";
 import { useNavigate } from "react-router-dom";
-import { getErrorMessage } from "../utils/getErrorMessage";
-import { ListHeader } from "../components/ui/ListHeader";
+import { getErrorMessage } from "../../utils/getErrorMessage";
+import { ListHeader } from "../../components/ui/ListHeader";
 
 export function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);

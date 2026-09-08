@@ -1,15 +1,15 @@
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { TicketActions } from "../components/tickets/TicketActions";
-import { TicketCostsCard } from "../components/tickets/TicketCostCard";
-import { TicketDetailsCard } from "../components/tickets/TicketDetailsCard";
-import { useAuth } from "../hooks/useAuth";
-import { getTicket, updateTicketStatus } from "../services/tickets";
-import type { TicketApi, TicketDetails, TicketStatus } from "../types/ticket";
-import { formatAmount } from "../utils/formatAmount";
-import { formatDate } from "../utils/formatDate";
-import { getErrorMessage } from "../utils/getErrorMessage";
+import { TicketActions } from "../../components/tickets/TicketActions";
+import { TicketCostsCard } from "../../components/tickets/TicketCostCard";
+import { TicketDetailsCard } from "../../components/tickets/TicketDetailsCard";
+import { useAuth } from "../../hooks/useAuth";
+import { getTicket, updateTicketStatus } from "../../services/tickets";
+import type { TicketApi, TicketDetails, TicketStatus } from "../../types/ticket";
+import { formatAmount } from "../../utils/formatAmount";
+import { formatDate } from "../../utils/formatDate";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 function toTicketDetails(ticket: TicketApi): TicketDetails {
   const baseAmount = formatAmount(ticket.initialService.amount);

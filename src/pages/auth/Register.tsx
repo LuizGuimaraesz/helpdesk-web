@@ -1,10 +1,10 @@
 import { useActionState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
-import { createUser } from "../services/users";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
+import { createUser } from "../../services/users";
 import { z } from "zod";
-import { getErrorMessage } from "../utils/getErrorMessage";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 
 const signUpSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome."),
