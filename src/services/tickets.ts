@@ -2,8 +2,17 @@ import type {
   TicketResponse,
   TicketsResponse,
   TicketStatus,
+  CreateTicket,
 } from "../types/ticket";
 import { api } from "./api";
+
+export async function createTicket({
+  title,
+  description,
+  initialServiceId,
+}: CreateTicket) {
+  await api.post("/tickets", { title, description, initialServiceId });
+}
 
 export async function getTickets() {
   const response = await api.get<TicketsResponse>("/tickets");

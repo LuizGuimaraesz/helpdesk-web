@@ -14,6 +14,7 @@ export function NavItem({ icon, label, to }: NavItemProps) {
   return (
     <NavLink
       to={to}
+      end
       className={({ isActive }) =>
         classMerge(
           "flex w-full items-center gap-3 rounded-[5px] p-3 text-sm leading-[1.4] transition-colors",

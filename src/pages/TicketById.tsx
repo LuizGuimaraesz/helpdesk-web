@@ -53,7 +53,8 @@ export function TicketByIdPage({
       const data = await getTicket(id);
 
       setTicket(toTicketDetails(data.ticket));
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.message);
       alert(getErrorMessage(error, "Falha ao carregar o chamado."));
     }
   }
@@ -71,9 +72,7 @@ export function TicketByIdPage({
         currentTicket ? { ...currentTicket, status } : currentTicket,
       );
     } catch (error) {
-      alert(
-        getErrorMessage(error, "Falha ao atualizar o status do chamado."),
-      );
+      alert(getErrorMessage(error, "Falha ao atualizar o status do chamado."));
     } finally {
       setIsUpdatingStatus(false);
     }

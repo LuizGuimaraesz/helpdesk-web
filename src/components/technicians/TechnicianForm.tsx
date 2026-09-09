@@ -193,12 +193,4 @@ export function TechnicianForm({
       )}
     </form>
   );
-
-  useEffect(() => {
-    setName(initialValues?.name ?? "");
-    setEmail(initialValues?.email ?? "");
-    setPassword("");
-    setHours(initialValues?.hours ?? []);
-    setValidationMessage(null);
-  }, [initialValues, mode]);
 }

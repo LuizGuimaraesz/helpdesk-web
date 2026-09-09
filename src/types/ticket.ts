@@ -47,6 +47,12 @@ export type TicketResponse = {
   ticket: TicketApi;
 };
 
+export type CreateTicket = {
+  title: string;
+  description: string;
+  initialServiceId: string;
+};
+
 export type TicketAdditionalService = {
   id: string;
   title: string;

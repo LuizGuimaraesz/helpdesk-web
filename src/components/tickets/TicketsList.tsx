@@ -1,5 +1,5 @@
 import type { Ticket } from "../../types/ticket";
-import { TicketRow } from "./ticketRow";
+import { TicketRow } from "./TicketRow";
 
 type TicketsListProps = {
   tickets: Ticket[];
