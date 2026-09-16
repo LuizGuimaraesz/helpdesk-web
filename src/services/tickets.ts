@@ -33,8 +33,8 @@ export async function updateTicketStatus(id: string, status: TicketStatus) {
 
 export async function createAdditionalService({
   id,
-  description,
+  title,
   amount,
 }: TicketAdditionalService) {
-  await api.post("/tickets", { id, description, amount });
+  await api.post("/tickets", { id, title, amount });
 }

@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { AuthLayout } from "../components/login/register/AuthLayout";
+import { AuthLayout } from "../components/auth/AuthLayout";
 import { LoginPage } from "../pages/auth/Login";
 import { RegisterPage } from "../pages/auth/Register";
 

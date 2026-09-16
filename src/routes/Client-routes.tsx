@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { TicketByIdPage } from "../pages/TicketById";
-import { AppLayout } from "../components/layout/AppLayout";
+import { AppLayout } from "../components/app/AppLayout";
 import { TicketsPage } from "../pages/Tickets";
 import { NewTicketPage } from "../pages/client/NewTicket";
 
