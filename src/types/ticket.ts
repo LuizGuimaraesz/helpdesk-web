@@ -55,7 +55,7 @@ export type CreateTicket = {
 
 export type TicketAdditionalService = {
   id: string;
-  title: string;
+  description: string;
   amount: string;
 };
 

@@ -34,6 +34,7 @@ export function Button({
       className={classMerge(
         "focus-visible:outline-brand flex h-10 w-full cursor-pointer items-center justify-center rounded-[5px] px-4 text-sm leading-[1.4] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 transition ease-linear disabled:opacity-50",
         variants.button[variant],
+        className,
       )}
       {...props}
     >
@@ -44,8 +45,11 @@ export function Button({
         </>
       ) : (
         <>
-          {variant === "secondary" && Icon && (
-            <Icon aria-hidden="true" className="text-muted size-4" />
+          {Icon && (
+            <Icon
+              aria-hidden="true"
+              className={classMerge("size-4", variant === "secondary" && "text-muted")}
+            />
           )}
           {children}
         </>

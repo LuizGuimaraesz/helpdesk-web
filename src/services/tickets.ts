@@ -3,6 +3,7 @@ import type {
   TicketsResponse,
   TicketStatus,
   CreateTicket,
+  TicketAdditionalService,
 } from "../types/ticket";
 import { api } from "./api";
 
@@ -28,4 +29,12 @@ export async function getTicket(id: string) {
 
 export async function updateTicketStatus(id: string, status: TicketStatus) {
   await api.patch(`/tickets/${id}/status`, { status });
+}
+
+export async function createAdditionalService({
+  id,
+  description,
+  amount,
+}: TicketAdditionalService) {
+  await api.post("/tickets", { id, description, amount });
 }

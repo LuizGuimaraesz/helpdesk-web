@@ -8,6 +8,7 @@ type StatusBadgeProps = {
   variant: StatusBadgeVariant;
   icon?: LucideIcon;
   className?: string;
+  showLabel?: boolean;
 };
 
 const variants: Record<StatusBadgeVariant, string> = {
@@ -21,9 +22,12 @@ export function StatusBadge({
   variant,
   icon: Icon,
   className,
+  showLabel = true,
 }: StatusBadgeProps) {
   return (
     <span
+      role={showLabel ? undefined : "img"}
+      aria-label={showLabel ? undefined : label}
       className={classMerge(
         "inline-flex items-center justify-center rounded-full text-xs leading-[1.4] font-bold whitespace-nowrap",
         Icon ? "p-1.5" : "px-2 py-1",
@@ -32,13 +36,13 @@ export function StatusBadge({
       )}
     >
       {Icon && <Icon aria-hidden="true" className="size-4 shrink-0" />}
-      {Icon ? (
+      {Icon && showLabel ? (
         <span className="flex h-4 items-center justify-center px-1.5">
           {label}
         </span>
-      ) : (
+      ) : !Icon && showLabel ? (
         label
-      )}
+      ) : null}
     </span>
   );
 }

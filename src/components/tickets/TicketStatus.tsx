@@ -12,6 +12,7 @@ import {
 
 type TicketStatusProps = {
   status: TicketStatus;
+  showLabel?: boolean;
 };
 
 const statusDetails: Record<
@@ -35,7 +36,7 @@ const statusDetails: Record<
   },
 };
 
-export function TicketStatus({ status }: TicketStatusProps) {
+export function TicketStatus({ status, showLabel = true }: TicketStatusProps) {
   const details = statusDetails[status];
 
   return (
@@ -43,6 +44,7 @@ export function TicketStatus({ status }: TicketStatusProps) {
       label={details.label}
       variant={details.variant}
       icon={details.icon}
+      showLabel={showLabel}
     />
   );
 }

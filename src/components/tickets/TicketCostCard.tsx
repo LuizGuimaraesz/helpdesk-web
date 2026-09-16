@@ -77,7 +77,7 @@ export function TicketCostsCard({ ticket }: TicketCostsCardProps) {
                   ))}
                 </dl>
               ) : (
-                <span className="text-muted text-xs leading-[1.4]">
+                <span className="text-foreground text-xs leading-[1.4]">
                   Nenhum adicional
                 </span>
               )}
@@ -85,11 +85,7 @@ export function TicketCostsCard({ ticket }: TicketCostsCardProps) {
           </div>
 
           <div className="border-border border-t pt-4">
-            <AmountRow
-              label="Total"
-              amount={ticket.totalAmount}
-              emphasized
-            />
+            <AmountRow label="Total" amount={ticket.totalAmount} emphasized />
           </div>
         </dl>
       </section>
