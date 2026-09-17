@@ -37,6 +37,8 @@ export type TicketApi = {
     title: string;
     amount: string;
   };
+
+  additionalServices?: TicketAdditionalService[];
 };
 
 export type TicketsResponse = {

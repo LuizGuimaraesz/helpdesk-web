@@ -2,10 +2,16 @@ import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TicketActions } from "../components/tickets/TicketActions";
+import { ServiceForm } from "../components/services/ServiceForm";
+import { TicketAdditionalServices } from "../components/tickets/TicketAdditionalServices";
 import { TicketCostsCard } from "../components/tickets/TicketCostCard";
 import { TicketDetailsCard } from "../components/tickets/TicketDetailsCard";
 import { useAuth } from "../hooks/useAuth";
-import { getTicket, updateTicketStatus } from "../services/tickets";
+import {
+  createAdditionalService,
+  getTicket,
+  updateTicketStatus,
+} from "../services/tickets";
 import type { TicketApi, TicketDetails, TicketStatus } from "../types/ticket";
 import { formatAmount } from "../utils/formatAmount";
 import { formatDate } from "../utils/formatDate";
@@ -13,6 +19,15 @@ import { getErrorMessage } from "../utils/getErrorMessage";
 
 function toTicketDetails(ticket: TicketApi): TicketDetails {
   const baseAmount = formatAmount(ticket.initialService.amount);
+  const additionalServices = ticket.additionalServices ?? [];
+  const totalAmount = [
+    ticket.initialService.amount,
+    ...additionalServices.map((service) => service.amount),
+  ].reduce((total, amount) => {
+    const numericAmount = Number(amount);
+
+    return Number.isFinite(numericAmount) ? total + numericAmount : total;
+  }, 0);
 
   return {
     id: ticket.id,
@@ -28,8 +43,11 @@ function toTicketDetails(ticket: TicketApi): TicketDetails {
       email: ticket.technician?.email ?? "Não atribuído",
     },
     baseAmount,
-    additionalServices: [],
-    totalAmount: baseAmount,
+    additionalServices: additionalServices.map((service) => ({
+      ...service,
+      amount: formatAmount(service.amount),
+    })),
+    totalAmount: formatAmount(String(totalAmount)),
     status: ticket.status,
   };
 }
@@ -47,6 +65,10 @@ export function TicketByIdPage({
   const { isLoading: isAuthLoading, session } = useAuth();
   const [ticket, setTicket] = useState<TicketDetails | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isAdditionalServiceModalOpen, setIsAdditionalServiceModalOpen] =
+    useState(false);
+  const [isSavingAdditionalService, setIsSavingAdditionalService] =
+    useState(false);
 
   async function loadTicket(id: string) {
     try {
@@ -75,6 +97,26 @@ export function TicketByIdPage({
       alert(getErrorMessage(error, "Falha ao atualizar o status do chamado."));
     } finally {
       setIsUpdatingStatus(false);
+    }
+  }
+
+  async function handleAddAdditionalService(title: string, amount: number) {
+    if (!ticket || session?.user.role !== "technician") {
+      return;
+    }
+
+    try {
+      setIsSavingAdditionalService(true);
+
+      await createAdditionalService(ticket.id, { title, amount });
+
+      const data = await getTicket(ticket.id);
+
+      setTicket(toTicketDetails(data.ticket));
+
+      setIsAdditionalServiceModalOpen(false);
+    } finally {
+      setIsSavingAdditionalService(false);
     }
   }
 
@@ -120,9 +162,27 @@ export function TicketByIdPage({
 
       {ticket && (
         <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1.62fr)_minmax(245px,1fr)]">
-          <TicketDetailsCard ticket={ticket} />
+          <div className="flex min-w-0 flex-col gap-5">
+            <TicketDetailsCard ticket={ticket} />
+            {session?.user.role === "technician" && (
+              <TicketAdditionalServices
+                services={ticket.additionalServices}
+                onAdd={() => setIsAdditionalServiceModalOpen(true)}
+              />
+            )}
+          </div>
           <TicketCostsCard ticket={ticket} />
         </div>
+      )}
+
+      {session?.user.role === "technician" && (
+        <ServiceForm
+          isOpen={isAdditionalServiceModalOpen}
+          isSaving={isSavingAdditionalService}
+          onClose={() => setIsAdditionalServiceModalOpen(false)}
+          onCreate={handleAddAdditionalService}
+          createModalTitle="Serviço adicional"
+        />
       )}
     </section>
   );

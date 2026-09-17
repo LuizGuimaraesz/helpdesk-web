@@ -9,8 +9,8 @@ import type { TicketApi, TicketStatus as Status } from "../../types/ticket";
 import { getErrorMessage } from "../../utils/getErrorMessage";
 
 const sections: { status: Status; title: string }[] = [
-  { status: "in_progress", title: "Em atendimento" },
   { status: "open", title: "Aberto" },
+  { status: "in_progress", title: "Em atendimento" },
   { status: "closed", title: "Encerrado" },
 ];
 

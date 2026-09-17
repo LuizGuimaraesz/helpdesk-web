@@ -31,10 +31,14 @@ export async function updateTicketStatus(id: string, status: TicketStatus) {
   await api.patch(`/tickets/${id}/status`, { status });
 }
 
-export async function createAdditionalService({
-  id,
-  title,
-  amount,
-}: TicketAdditionalService) {
-  await api.post("/tickets", { id, title, amount });
+export async function createAdditionalService(
+  ticketId: string,
+  data: Pick<TicketAdditionalService, "title"> & { amount: number },
+) {
+  const response = await api.post<{ service: TicketAdditionalService }>(
+    `/tickets/${ticketId}/services`,
+    data,
+  );
+
+  return response.data.service;
 }

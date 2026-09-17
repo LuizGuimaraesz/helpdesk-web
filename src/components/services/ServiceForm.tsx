@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { z } from "zod";
 import type { Service } from "../../types/service";
+import { formatAmountInput } from "../../utils/formatAmountInput";
 import { getErrorMessage } from "../../utils/getErrorMessage";
 import { Input } from "../ui/Input";
 import { Modal } from "../ui/Modal";
@@ -16,36 +17,24 @@ const serviceSchema = z.object({
       z
         .number()
         .finite("Informe um valor válido para o serviço.")
-        .min(0, "Informe um valor válido para o serviço."),
+        .positive("O valor deve ser maior que zero."),
     ),
 });
-
-function formatAmountInput(value: string) {
-  const digits = value.replace(/\D/g, "");
-
-  if (!digits) {
-    return "";
-  }
-
-  const amountInCents = digits.padStart(3, "0");
-  const integerPart = amountInCents.slice(0, -2).replace(/^0+(?=\d)/, "");
-  const decimalPart = amountInCents.slice(-2);
-
-  return `${integerPart},${decimalPart}`;
-}
 
 type ServiceFormProps = {
   isOpen: boolean;
   service?: Service | null;
+  createModalTitle?: string;
   onClose: () => void;
   onCreate: (title: string, amount: number) => Promise<void>;
-  onUpdate: (id: string, title: string, amount: number) => Promise<void>;
+  onUpdate?: (id: string, title: string, amount: number) => Promise<void>;
   isSaving?: boolean;
 };
 
 export function ServiceForm({
   isOpen,
   service = null,
+  createModalTitle = "Cadastro de serviço",
   onClose,
   onCreate,
   onUpdate,
@@ -79,7 +68,7 @@ export function ServiceForm({
     }
 
     try {
-      if (service) {
+      if (service && onUpdate) {
         await onUpdate(service.id, result.data.title, result.data.amount);
         return;
       }
@@ -95,7 +84,7 @@ export function ServiceForm({
   return (
     <Modal
       isOpen={isOpen}
-      title={service ? "Serviço" : "Cadastro de serviço"}
+      title={service ? "Serviço" : createModalTitle}
       onClose={onClose}
     >
       <form onSubmit={handleSubmit}>
