@@ -42,3 +42,10 @@ export async function createAdditionalService(
 
   return response.data.service;
 }
+
+export async function deleteAdditionalService(
+  ticketId: string,
+  serviceId: string,
+) {
+  await api.delete(`/tickets/${ticketId}/services/${serviceId}`);
+}

@@ -5,12 +5,16 @@ import { EditButton } from "../ui/EditButton";
 
 type TicketAdditionalServicesProps = {
   services: TicketAdditionalService[];
+  deletingServiceId?: string | null;
   onAdd: () => void;
+  onDelete: (serviceId: string) => void;
 };
 
 export function TicketAdditionalServices({
   services,
+  deletingServiceId = null,
   onAdd,
+  onDelete,
 }: TicketAdditionalServicesProps) {
   return (
     <section className="border-border min-w-0 rounded-[10px] border p-5 sm:p-6">
@@ -43,6 +47,8 @@ export function TicketAdditionalServices({
                 variant="delete"
                 aria-label={`Excluir serviço adicional ${service.title}`}
                 className="ml-2 shrink-0"
+                disabled={deletingServiceId === service.id}
+                onClick={() => onDelete(service.id)}
               />
             </li>
           ))}

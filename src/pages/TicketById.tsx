@@ -9,6 +9,7 @@ import { TicketDetailsCard } from "../components/tickets/TicketDetailsCard";
 import { useAuth } from "../hooks/useAuth";
 import {
   createAdditionalService,
+  deleteAdditionalService,
   getTicket,
   updateTicketStatus,
 } from "../services/tickets";
@@ -69,6 +70,8 @@ export function TicketByIdPage({
     useState(false);
   const [isSavingAdditionalService, setIsSavingAdditionalService] =
     useState(false);
+  const [deletingAdditionalServiceId, setDeletingAdditionalServiceId] =
+    useState<string | null>(null);
 
   async function loadTicket(id: string) {
     try {
@@ -120,6 +123,26 @@ export function TicketByIdPage({
     }
   }
 
+  async function handleDeleteAdditionalService(serviceId: string) {
+    if (!ticket || session?.user.role !== "technician") {
+      return;
+    }
+
+    try {
+      setDeletingAdditionalServiceId(serviceId);
+      await deleteAdditionalService(ticket.id, serviceId);
+
+      const data = await getTicket(ticket.id);
+      setTicket(toTicketDetails(data.ticket));
+    } catch (error) {
+      alert(
+        getErrorMessage(error, "Não foi possível excluir o serviço adicional."),
+      );
+    } finally {
+      setDeletingAdditionalServiceId(null);
+    }
+  }
+
   useEffect(() => {
     if (isAuthLoading || !session || !ticketId) {
       return;
@@ -167,7 +190,9 @@ export function TicketByIdPage({
             {session?.user.role === "technician" && (
               <TicketAdditionalServices
                 services={ticket.additionalServices}
+                deletingServiceId={deletingAdditionalServiceId}
                 onAdd={() => setIsAdditionalServiceModalOpen(true)}
+                onDelete={handleDeleteAdditionalService}
               />
             )}
           </div>
