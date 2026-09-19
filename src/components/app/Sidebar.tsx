@@ -7,17 +7,9 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
-import type { UserRole } from "../../types/user";
-import { NavItem } from "./NavItem";
 import { UserProfile } from "./UserProfile";
-
-type SidebarProps = {
-  role: UserRole;
-  user: {
-    email: string;
-    name: string;
-  };
-};
+import type { SidebarProps } from "../../types/user";
+import { NavItem } from "./NavItem";
 
 const adminNavigation = [
   { icon: ClipboardList, label: "Chamados", to: "/tickets" },
@@ -35,7 +27,7 @@ const clientNavigation = [
   { icon: Plus, label: "Criar chamado", to: "/tickets/new" },
 ];
 
-export function Sidebar({ role, user }: SidebarProps) {
+export function Sidebar({ role, name, email, avatarUrl }: SidebarProps) {
   const navigation =
     role === "admin"
       ? adminNavigation
@@ -75,7 +67,7 @@ export function Sidebar({ role, user }: SidebarProps) {
         </div>
       </nav>
 
-      <UserProfile name={user.name} email={user.email} />
+      <UserProfile email={email} name={name} avatarUrl={avatarUrl} />
     </aside>
   );
 }

@@ -7,6 +7,7 @@ export type UserAPIResponse = {
     name: string;
     email: string;
     role: UserRole;
+    avatarUrl?: string | null;
   };
 };
 
@@ -14,10 +15,20 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  avatarUrl: string | null;
+  avatarUrl?: string | null;
   hours?: string[];
 };
 
 export type UsersResponse = {
   users: User[];
+};
+
+export type UserProfileProps = {
+  name: string;
+  email: string;
+  avatarUrl?: string | null;
+};
+
+export type SidebarProps = UserProfileProps & {
+  role: UserRole;
 };

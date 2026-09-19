@@ -11,7 +11,12 @@ export function AppLayout() {
 
   return (
     <div className="bg-page flex h-dvh min-w-[320px] items-stretch overflow-hidden pt-3">
-      <Sidebar role={session.user.role} user={session.user} />
+      <Sidebar
+        role={session.user.role}
+        name={session.user.name}
+        email={session.user.email}
+        avatarUrl={session.user.avatarUrl}
+      />
 
       <main className="bg-surface min-w-0 flex-1 overflow-y-auto rounded-tl-[20px] px-6 pt-8 pb-12 sm:px-8 lg:px-12 lg:pt-[52px]">
         <Outlet />

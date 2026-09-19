@@ -32,3 +32,10 @@ export async function updateUser(id: string, name: string, email: string) {
 export async function deleteUser(id: string) {
   await api.delete(`/users/${id}`);
 }
+
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+) {
+  await api.patch("/users/password", { currentPassword, newPassword });
+}
