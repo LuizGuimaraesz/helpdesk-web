@@ -1,6 +1,7 @@
 import { CircleUserRound, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChangePasswordForm } from "../profile/ChangePasswordForm";
 import { ProfileForm } from "../profile/ProfileForm";
 import { useAuth } from "../../hooks/useAuth";
 import { getInitials } from "../../utils/getInitials";
@@ -11,6 +12,7 @@ export function UserProfile({ email, name, avatarUrl }: UserProfileProps) {
   const { remove } = useAuth();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   function handleLogout() {
@@ -19,7 +21,22 @@ export function UserProfile({ email, name, avatarUrl }: UserProfileProps) {
   }
 
   function handleOpenProfile() {
+    setIsProfileOpen(true);
+  }
+
+  function handleCloseProfile() {
+    setIsProfileOpen(false);
     setIsOptionsOpen(false);
+  }
+
+  function handleOpenChangePassword() {
+    setIsProfileOpen(false);
+    setIsChangePasswordOpen(true);
+  }
+
+  function handleCloseChangePassword() {
+    setIsChangePasswordOpen(false);
+
     setIsProfileOpen(true);
   }
 
@@ -95,10 +112,16 @@ export function UserProfile({ email, name, avatarUrl }: UserProfileProps) {
 
       <ProfileForm
         isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
+        onClose={handleCloseProfile}
+        onChangePassword={handleOpenChangePassword}
         name={name}
         email={email}
         avatarUrl={avatarUrl}
+      />
+
+      <ChangePasswordForm
+        isOpen={isChangePasswordOpen}
+        onClose={handleCloseChangePassword}
       />
     </div>
   );
