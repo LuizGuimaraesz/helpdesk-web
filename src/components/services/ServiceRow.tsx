@@ -18,24 +18,26 @@ export function ServiceRow({
   onToggleStatus,
 }: ServiceRowProps) {
   return (
-    <tr className="border-border h-16 border-b last:border-b-0">
-      <td className="text-foreground min-w-0 px-3 text-sm leading-[1.4] font-bold">
-        <p className="truncate">{service.title}</p>
+    <tr className="border-border h-12 border-b last:border-b-0 md:h-16">
+      <td className="text-foreground min-w-0 px-1.5 text-xs leading-[1.4] font-bold md:px-3 md:text-sm">
+        <p className="block max-w-full truncate" title={service.title}>
+          {service.title}
+        </p>
       </td>
 
-      <td className="text-foreground px-3 text-sm leading-[1.4] whitespace-nowrap">
+      <td className="text-foreground truncate px-1.5 text-xs leading-[1.4] whitespace-nowrap md:px-3 md:text-sm">
         {formatAmount(service.amount)}
       </td>
 
-      <td className="px-3">
+      <td className="px-1 text-center md:px-3">
         <ServiceStatus active={service.active} />
       </td>
 
-      <td className="px-3">
+      <td className="px-1 text-center md:px-3">
         <button
           type="button"
           disabled={isUpdatingStatus}
-          className="text-muted hover:text-foreground focus-visible:outline-brand inline-flex cursor-pointer items-center gap-2 rounded-sm text-xs leading-[1.4] whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="text-muted hover:text-foreground focus-visible:outline-brand mx-auto inline-flex cursor-pointer items-center gap-2 rounded-sm text-xs leading-[1.4] whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={`${service.active ? "Desativar" : "Reativar"} o serviço ${service.title}`}
           onClick={
             onToggleStatus ? () => onToggleStatus(service) : undefined
@@ -46,14 +48,17 @@ export function ServiceRow({
           ) : (
             <CircleCheck aria-hidden="true" className="size-4 shrink-0" />
           )}
-          {service.active ? "Desativar" : "Reativar"}
+          <span className="hidden md:inline">
+            {service.active ? "Desativar" : "Reativar"}
+          </span>
         </button>
       </td>
 
-      <td className="px-3 text-center">
+      <td className="px-1.5 text-center md:px-3">
         <EditButton
           aria-label={`Editar o serviço ${service.title}`}
           onClick={onEdit ? () => onEdit(service) : undefined}
+          className="size-7"
         />
       </td>
     </tr>

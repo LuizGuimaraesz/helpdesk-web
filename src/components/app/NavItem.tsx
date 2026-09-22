@@ -6,15 +6,17 @@ type NavItemProps = {
   icon: LucideIcon;
   label: string;
   to: string;
+  onClick?: () => void;
 };
 
-export function NavItem({ icon, label, to }: NavItemProps) {
+export function NavItem({ icon, label, to, onClick }: NavItemProps) {
   const Icon = icon;
 
   return (
     <NavLink
       to={to}
       end
+      onClick={onClick}
       className={({ isActive }) =>
         classMerge(
           "flex w-full items-center gap-3 rounded-[5px] p-3 text-sm leading-[1.4] transition-colors",

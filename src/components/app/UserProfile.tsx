@@ -6,8 +6,14 @@ import { ProfileForm } from "../profile/ProfileForm";
 import { useAuth } from "../../hooks/useAuth";
 import { getInitials } from "../../utils/getInitials";
 import type { UserProfileProps } from "../../types/user";
+import { classMerge } from "../../utils/classMerge";
 
-export function UserProfile({ email, name, avatarUrl }: UserProfileProps) {
+export function UserProfile({
+  email,
+  name,
+  avatarUrl,
+  compact = false,
+}: UserProfileProps & { compact?: boolean }) {
   const navigate = useNavigate();
   const { remove } = useAuth();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
@@ -62,13 +68,29 @@ export function UserProfile({ email, name, avatarUrl }: UserProfileProps) {
         aria-haspopup="menu"
         aria-label="Abrir opções do perfil"
         onClick={() => setIsOptionsOpen((isOpen) => !isOpen)}
-        className="border-foreground hover:bg-foreground/40 focus-visible:outline-brand flex w-full cursor-pointer items-center gap-3 border-t px-4 py-5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
+        className={classMerge(
+          "border-foreground hover:bg-foreground/40 focus-visible:outline-brand flex w-full cursor-pointer items-center gap-3 border-t px-4 py-5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px]",
+          compact && "size-11 justify-center gap-0 rounded-full border-0 p-0",
+        )}
       >
-        <span className="bg-brand text-surface flex size-8 shrink-0 items-center justify-center rounded-full text-sm leading-[1.2] tracking-[1.4px]">
-          {getInitials(name)}
-        </span>
+        {compact && avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt=""
+            className="size-11 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <span
+            className={classMerge(
+              "bg-brand text-surface flex size-8 shrink-0 items-center justify-center rounded-full text-sm leading-[1.2] tracking-[1.4px]",
+              compact && "size-11 text-base",
+            )}
+          >
+            {getInitials(name)}
+          </span>
+        )}
 
-        <span className="min-w-0 flex-1 leading-[1.4]">
+        <span className={classMerge("min-w-0 flex-1 leading-[1.4]", compact && "sr-only")}>
           <span className="text-surface block truncate text-sm">{name}</span>
           <span className="text-placeholder block truncate text-xs">
             {email}
@@ -80,7 +102,10 @@ export function UserProfile({ email, name, avatarUrl }: UserProfileProps) {
         <div
           role="menu"
           aria-label="Opções do perfil"
-          className="bg-page absolute bottom-4 left-[calc(100%+12px)] z-20 w-[238px] rounded-[10px] px-4 py-5 shadow-lg"
+          className={classMerge(
+            "bg-page absolute bottom-4 left-[calc(100%+12px)] z-20 w-[238px] rounded-[10px] px-4 py-5 shadow-lg",
+            compact && "top-full right-0 bottom-auto left-auto mt-2",
+          )}
         >
           <p className="text-placeholder text-xs font-bold tracking-[0.6px] uppercase">
             Opções

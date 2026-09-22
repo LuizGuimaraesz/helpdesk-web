@@ -114,10 +114,20 @@ export function ServicesPage() {
   return (
     <section
       aria-labelledby="services-title"
-      className="flex min-w-0 flex-col gap-6"
+      className="flex min-w-0 flex-col gap-5 md:gap-6"
     >
-      <ListHeader title="Serviços" titleId="services-title">
-        <Button variant="plus" onClick={handleOpenCreateServiceModal} />
+      <ListHeader
+        title="Serviços"
+        titleId="services-title"
+        titleClassName="text-lg md:text-2xl"
+      >
+        <Button
+          variant="plus"
+          iconOnlyMobile
+          className="max-md:size-10"
+          aria-label="Novo serviço"
+          onClick={handleOpenCreateServiceModal}
+        />
       </ListHeader>
 
       <ServicesList

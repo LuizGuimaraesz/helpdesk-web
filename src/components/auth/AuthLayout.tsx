@@ -14,7 +14,7 @@ export function AuthLayout() {
         aria-hidden="true"
       />
 
-      <section className="bg-surface absolute inset-0 top-[20px] flex flex-col items-center gap-8 overflow-y-auto rounded-t-[20px] px-5 py-10 sm:px-12 sm:py-12 lg:left-auto lg:w-[680px] lg:rounded-tr-none lg:px-[140px]">
+      <section className="bg-surface absolute inset-0 top-9 flex flex-col items-center gap-8 overflow-y-auto rounded-t-[20px] px-5 py-10 sm:px-12 sm:py-12 lg:top-[20px] lg:left-auto lg:w-[680px] lg:rounded-tr-none lg:px-[140px]">
         <img src={NavHeader} alt="HelpDesk" />
         <Outlet />
       </section>

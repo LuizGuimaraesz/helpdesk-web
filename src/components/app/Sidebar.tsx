@@ -1,5 +1,3 @@
-import logoSymbolBase from "../../assets/logo-symbol-base.svg";
-import logoSymbolDetail from "../../assets/logo-symbol-detail.svg";
 import {
   BriefcaseBusiness,
   ClipboardList,
@@ -9,7 +7,14 @@ import {
 } from "lucide-react";
 import { UserProfile } from "./UserProfile";
 import type { SidebarProps } from "../../types/user";
+import { classMerge } from "../../utils/classMerge";
+import { AppBrand } from "./AppBrand";
 import { NavItem } from "./NavItem";
+
+type SidebarComponentProps = SidebarProps & {
+  mobile?: boolean;
+  onNavigate?: () => void;
+};
 
 const adminNavigation = [
   { icon: ClipboardList, label: "Chamados", to: "/tickets" },
@@ -27,7 +32,14 @@ const clientNavigation = [
   { icon: Plus, label: "Criar chamado", to: "/tickets/new" },
 ];
 
-export function Sidebar({ role, name, email, avatarUrl }: SidebarProps) {
+export function Sidebar({
+  role,
+  name,
+  email,
+  avatarUrl,
+  mobile = false,
+  onNavigate,
+}: SidebarComponentProps) {
   const navigation =
     role === "admin"
       ? adminNavigation
@@ -36,38 +48,25 @@ export function Sidebar({ role, name, email, avatarUrl }: SidebarProps) {
         : clientNavigation;
 
   return (
-    <aside className="bg-page flex h-full w-[200px] shrink-0 flex-col">
+    <aside
+      className={classMerge(
+        "bg-page h-full shrink-0 flex-col",
+        mobile ? "flex w-[min(80vw,280px)] md:hidden" : "hidden w-[200px] md:flex",
+      )}
+    >
       <header className="border-foreground flex w-full items-center gap-3 border-b px-5 py-6">
-        <span aria-hidden="true" className="relative size-11 shrink-0">
-          <img
-            src={logoSymbolBase}
-            alt=""
-            className="absolute inset-0 size-full"
-          />
-          <img
-            src={logoSymbolDetail}
-            alt=""
-            className="absolute top-1/2 left-1/2 size-[32.5px] -translate-x-1/3 -translate-y-1/2"
-          />
-        </span>
-
-        <div className="flex min-w-0 flex-col justify-center font-bold leading-[1.4]">
-          <span className="text-surface text-xl">HelpDesk</span>
-          <span className="text-brand-light text-[10px] tracking-[0.6px] uppercase">
-            {role}
-          </span>
-        </div>
+        <AppBrand role={role} />
       </header>
 
       <nav aria-label="Navegação principal" className="flex-1 px-4 py-5">
         <div className="flex flex-col gap-1">
           {navigation.map((item) => (
-            <NavItem key={item.to} {...item} />
+            <NavItem key={item.to} {...item} onClick={onNavigate} />
           ))}
         </div>
       </nav>
 
-      <UserProfile email={email} name={name} avatarUrl={avatarUrl} />
+      {!mobile && <UserProfile email={email} name={name} avatarUrl={avatarUrl} />}
     </aside>
   );
 }

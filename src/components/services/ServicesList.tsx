@@ -16,26 +16,26 @@ export function ServicesList({
 }: ServicesListProps) {
   return (
     <div className="border-border w-full min-w-0 max-w-full overflow-x-auto rounded-[10px] border">
-      <table className="w-full min-w-[760px] table-fixed border-collapse">
+      <table className="w-full min-w-[210px] table-fixed border-collapse md:min-w-[760px]">
         <caption className="sr-only">Lista de serviços</caption>
 
         <colgroup>
           <col />
-          <col className="w-[32%]" />
-          <col className="w-[76px]" />
-          <col className="w-24" />
-          <col className="w-[52px]" />
+          <col className="w-[68px] md:w-[32%]" />
+          <col className="w-9 md:w-[76px]" />
+          <col className="w-9 md:w-24" />
+          <col className="w-10 md:w-[52px]" />
         </colgroup>
 
         <thead>
-          <tr className="border-border text-placeholder h-12 border-b text-left text-sm leading-[1.4] font-bold">
-            <th scope="col" className="px-3">
+          <tr className="border-border text-placeholder h-10 border-b text-left text-xs leading-[1.4] font-normal md:h-12 md:text-sm md:font-bold">
+            <th scope="col" className="px-1.5 md:px-3">
               Título
             </th>
-            <th scope="col" className="px-3">
+            <th scope="col" className="px-1.5 md:px-3">
               Valor
             </th>
-            <th scope="col" className="px-3">
+            <th scope="col" className="px-1 md:px-3">
               Status
             </th>
             <th scope="col">
