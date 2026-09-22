@@ -8,6 +8,7 @@ export type UserAPIResponse = {
     email: string;
     role: UserRole;
     avatarUrl?: string | null;
+    hours?: string[];
   };
 };
 

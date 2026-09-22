@@ -9,6 +9,7 @@ import { EditButton } from "../ui/EditButton";
 import { Input } from "../ui/Input";
 import { Modal } from "../ui/Modal";
 import { UserInfo } from "../ui/UserInfo";
+import { Availability } from "../technicians/Availability";
 
 type ProfileFormProps = {
   isOpen: boolean;
@@ -37,6 +38,8 @@ export function ProfileForm({
   const [email, setEmail] = useState(initialEmail);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const isTechnician = session?.user.role === "technician";
+  const hours = session?.user.hours ?? [];
 
   useEffect(() => {
     if (isOpen) {
@@ -136,6 +139,21 @@ export function ProfileForm({
               Alterar
             </Button>
           </div>
+
+          {isTechnician && (
+            <section className="border-border mt-6 border-t pt-6">
+              <h3 className="text-foreground text-base leading-[1.4] font-bold">
+                Disponibilidade
+              </h3>
+              <p className="text-muted mt-1 text-xs leading-[1.4]">
+                Horários de atendimento definidos pelo admin
+              </p>
+
+              <div className="mt-4">
+                <Availability hours={hours} />
+              </div>
+            </section>
+          )}
 
           {errorMessage && (
             <p className="text-feedback-error mt-4 text-sm font-medium">
