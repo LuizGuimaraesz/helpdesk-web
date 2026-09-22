@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { TechniciansList } from "../../components/technicians/TechniciansList";
 import { Button } from "../../components/ui/Button";
@@ -66,9 +67,12 @@ export function TechniciansPage() {
     >
       <ListHeader title="Técnicos" titleId="technicians-title">
         <Button
-          variant="plus"
+          icon={Plus}
+          className="w-auto"
           onClick={() => navigate("/technicians/new")}
-        />
+        >
+          Novo
+        </Button>
       </ListHeader>
 
       <TechniciansList

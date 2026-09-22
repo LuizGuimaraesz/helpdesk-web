@@ -38,7 +38,7 @@ export function TicketDetailsCard({ ticket }: TicketDetailsCardProps) {
         <Detail label="Descrição" value={ticket.description} />
         <Detail label="Categoria" value={ticket.category} />
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-5">
           <Detail label="Criado em" value={ticket.createdAt} />
           <Detail label="Atualizado em" value={ticket.updatedAt} />
         </div>

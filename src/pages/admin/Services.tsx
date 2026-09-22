@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 import { ServicesList } from "../../components/services/ServicesList";
 import { ServiceForm } from "../../components/services/ServiceForm";
 import { Button } from "../../components/ui/Button";
@@ -122,12 +123,14 @@ export function ServicesPage() {
         titleClassName="text-lg md:text-2xl"
       >
         <Button
-          variant="plus"
+          icon={Plus}
           iconOnlyMobile
-          className="max-md:size-10"
+          className="w-auto max-md:size-10"
           aria-label="Novo serviço"
           onClick={handleOpenCreateServiceModal}
-        />
+        >
+          Novo
+        </Button>
       </ListHeader>
 
       <ServicesList

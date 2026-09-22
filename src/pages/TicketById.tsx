@@ -156,7 +156,7 @@ export function TicketByIdPage({
       aria-labelledby="ticket-details-title"
       className="mx-auto flex w-full max-w-[900px] min-w-0 flex-col gap-6"
     >
-      <header className="flex flex-wrap items-end justify-between gap-5">
+      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-5">
         <div className="flex flex-col gap-3">
           <Link
             to={backTo}

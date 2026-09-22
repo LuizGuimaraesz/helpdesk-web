@@ -14,23 +14,25 @@ export function TicketActions({
   onChangeStatus,
 }: TicketActionsProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="grid w-full grid-cols-2 gap-2 md:flex md:w-auto md:flex-wrap md:items-center">
       <Button
-        variant="secondary"
-        icon={Clock3}
-        disabled={status !== "open" || isUpdating}
-        onClick={() => onChangeStatus("in_progress")}
-      >
-        Em atendimento
-      </Button>
-
-      <Button
-        variant="secondary"
+        variant="white"
         icon={CircleCheckBig}
         disabled={status === "closed" || isUpdating}
         onClick={() => onChangeStatus("closed")}
+        className="w-full md:w-auto"
       >
-        Encerrado
+        Encerrar
+      </Button>
+
+      <Button
+        variant="black"
+        icon={Clock3}
+        disabled={status !== "open" || isUpdating}
+        onClick={() => onChangeStatus("in_progress")}
+        className="w-full md:w-auto"
+      >
+        Iniciar atendimento
       </Button>
     </div>
   );
