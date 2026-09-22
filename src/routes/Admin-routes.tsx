@@ -14,7 +14,13 @@ export function AdminRoutes() {
       <Route element={<AppLayout />}>
         <Route
           path="/tickets"
-          element={<TicketsPage title="Chamados" actionVariant="edit" />}
+          element={
+            <TicketsPage
+              title="Chamados"
+              actionVariant="edit"
+              mobileCompact
+            />
+          }
         />
         <Route
           path="/tickets/:ticketId"

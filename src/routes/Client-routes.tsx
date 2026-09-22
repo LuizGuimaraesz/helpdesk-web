@@ -10,7 +10,13 @@ export function ClientRoutes() {
       <Route element={<AppLayout />}>
         <Route
           path="/tickets"
-          element={<TicketsPage title="Meus chamados" actionVariant="view" />}
+          element={
+            <TicketsPage
+              title="Meus chamados"
+              actionVariant="view"
+              mobileCompact
+            />
+          }
         />
         <Route
           path="/tickets/:ticketId"
