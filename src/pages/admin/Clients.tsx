@@ -82,7 +82,7 @@ export function ClientsPage() {
   return (
     <section
       aria-labelledby="clients-title"
-      className="flex min-w-0 flex-col gap-6"
+      className="flex min-w-0 flex-col gap-5 md:gap-6"
     >
       <ListHeader title="Clientes" titleId="clients-title" />
 

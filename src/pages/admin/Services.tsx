@@ -117,11 +117,7 @@ export function ServicesPage() {
       aria-labelledby="services-title"
       className="flex min-w-0 flex-col gap-5 md:gap-6"
     >
-      <ListHeader
-        title="Serviços"
-        titleId="services-title"
-        titleClassName="text-lg md:text-2xl"
-      >
+      <ListHeader title="Serviços" titleId="services-title">
         <Button
           icon={Plus}
           iconOnlyMobile

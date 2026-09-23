@@ -11,9 +11,9 @@ export async function createTechnician(data: CreateTechnicianParams) {
   await api.post("/technicians", data);
 }
 
-export async function updateTechnicianAvailabilities(
+export async function updateTechnicianHours(
   id: string,
   hours: string[],
 ) {
-  await api.put(`/technicians/${id}/availabilities`, { hours });
+  await api.put(`/technicians/${id}/hours`, { hours });
 }

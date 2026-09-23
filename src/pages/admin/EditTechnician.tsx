@@ -6,7 +6,7 @@ import {
 } from "../../components/technicians/TechnicianForm";
 import { useAuth } from "../../hooks/useAuth";
 import { getUserById, updateUser } from "../../services/users";
-import { updateTechnicianAvailabilities } from "../../services/technicians";
+import { updateTechnicianHours } from "../../services/technicians";
 import type { User } from "../../types/user";
 import { getErrorMessage } from "../../utils/getErrorMessage";
 
@@ -60,7 +60,7 @@ export function EditTechnicianPage() {
       setErrorMessage(null);
 
       await updateUser(id, values.name, values.email);
-      await updateTechnicianAvailabilities(id, values.hours);
+      await updateTechnicianHours(id, values.hours);
 
       navigate("/technicians");
     } catch (error) {

@@ -14,21 +14,21 @@ export function ClientsList({
 }: ClientsListProps) {
   return (
     <div className="border-border w-full min-w-0 max-w-full overflow-x-auto rounded-[10px] border">
-      <table className="w-full min-w-[640px] table-fixed border-collapse">
+      <table className="w-full min-w-0 table-fixed border-collapse md:min-w-[640px]">
         <caption className="sr-only">Lista de clientes</caption>
 
         <colgroup>
           <col />
-          <col className="w-[42%]" />
-          <col className="w-24" />
+          <col className="w-[40%] md:w-[42%]" />
+          <col className="w-20 md:w-24" />
         </colgroup>
 
         <thead>
-          <tr className="border-border text-placeholder h-12 border-b text-left text-sm leading-[1.4] font-bold">
-            <th scope="col" className="px-3">
+          <tr className="border-border text-placeholder h-10 border-b text-left text-xs leading-[1.4] font-normal md:h-12 md:text-sm md:font-bold">
+            <th scope="col" className="px-2 md:px-3">
               Nome
             </th>
-            <th scope="col" className="px-3">
+            <th scope="col" className="px-2 md:px-3">
               E-mail
             </th>
             <th scope="col">

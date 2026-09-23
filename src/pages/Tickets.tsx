@@ -48,11 +48,7 @@ export function TicketsPage({
         mobileCompact ? "flex min-w-0 flex-col gap-5 md:gap-6" : "flex min-w-0 flex-col gap-6"
       }
     >
-      <ListHeader
-        title={title}
-        titleId="tickets-title"
-        titleClassName={mobileCompact ? "text-lg md:text-2xl" : undefined}
-      />
+      <ListHeader title={title} titleId="tickets-title" />
 
       <TicketsList
         tickets={tickets}

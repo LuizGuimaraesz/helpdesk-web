@@ -63,12 +63,14 @@ export function TechniciansPage() {
   return (
     <section
       aria-labelledby="technicians-title"
-      className="flex min-w-0 flex-col gap-6"
+      className="flex min-w-0 flex-col gap-5 md:gap-6"
     >
       <ListHeader title="Técnicos" titleId="technicians-title">
         <Button
           icon={Plus}
-          className="w-auto"
+          iconOnlyMobile
+          className="w-auto max-md:size-10"
+          aria-label="Novo técnico"
           onClick={() => navigate("/technicians/new")}
         >
           Novo
