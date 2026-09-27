@@ -24,6 +24,14 @@ export type UsersResponse = {
   users: User[];
 };
 
+export type UserResponse = {
+  user: User;
+};
+
+export type TechnicianResponse = {
+  technician: User;
+};
+
 export type UserProfileProps = {
   name: string;
   email: string;

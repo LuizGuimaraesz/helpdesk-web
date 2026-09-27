@@ -1,4 +1,5 @@
 import { api } from "./api";
+import type { TechnicianResponse } from "../types/user";
 
 type CreateTechnicianParams = {
   name: string;
@@ -8,12 +9,19 @@ type CreateTechnicianParams = {
 };
 
 export async function createTechnician(data: CreateTechnicianParams) {
-  await api.post("/technicians", data);
+  const response = await api.post<TechnicianResponse>("/technicians", data);
+
+  return response.data.technician;
 }
 
 export async function updateTechnicianHours(
   id: string,
   hours: string[],
 ) {
-  await api.put(`/technicians/${id}/hours`, { hours });
+  const response = await api.put<TechnicianResponse>(
+    `/technicians/${id}/hours`,
+    { hours },
+  );
+
+  return response.data.technician;
 }

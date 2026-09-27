@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { User, UsersResponse } from "../types/user";
+import type { UserResponse, UsersResponse } from "../types/user";
 
 type CreateUserParams = {
   name: string;
@@ -8,7 +8,9 @@ type CreateUserParams = {
 };
 
 export async function createUser(data: CreateUserParams) {
-  await api.post("/users", data);
+  const response = await api.post<UserResponse>("/users", data);
+
+  return response.data.user;
 }
 
 export async function getUsers(role: "client" | "technician") {
@@ -20,13 +22,18 @@ export async function getUsers(role: "client" | "technician") {
 }
 
 export async function getUserById(id: string) {
-  const response = await api.get<{ user: User }>(`/users/${id}`);
+  const response = await api.get<UserResponse>(`/users/${id}`);
 
   return response.data.user;
 }
 
 export async function updateUser(id: string, name: string, email: string) {
-  await api.patch(`/users/${id}`, { name, email });
+  const response = await api.patch<UserResponse>(`/users/${id}`, {
+    name,
+    email,
+  });
+
+  return response.data.user;
 }
 
 export async function deleteUser(id: string) {

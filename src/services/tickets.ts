@@ -12,7 +12,13 @@ export async function createTicket({
   description,
   initialServiceId,
 }: CreateTicket) {
-  await api.post("/tickets", { title, description, initialServiceId });
+  const response = await api.post<TicketResponse>("/tickets", {
+    title,
+    description,
+    initialServiceId,
+  });
+
+  return response.data.ticket;
 }
 
 export async function getTickets() {
@@ -28,7 +34,11 @@ export async function getTicket(id: string) {
 }
 
 export async function updateTicketStatus(id: string, status: TicketStatus) {
-  await api.patch(`/tickets/${id}/status`, { status });
+  const response = await api.patch<TicketResponse>(`/tickets/${id}/status`, {
+    status,
+  });
+
+  return response.data.ticket;
 }
 
 export async function createAdditionalService(

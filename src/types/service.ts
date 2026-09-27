@@ -8,3 +8,7 @@ export type Service = {
 export type ServicesResponse = {
   services: Service[];
 };
+
+export type ServiceResponse = {
+  service: Service;
+};

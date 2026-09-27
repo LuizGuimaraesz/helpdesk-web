@@ -1,10 +1,13 @@
 import { api } from "./api";
-import type { ServicesResponse } from "../types/service";
+import type { ServiceResponse, ServicesResponse } from "../types/service";
 
 export async function createService(title: string, amount: number) {
-  const response = await api.post("/services", { title, amount });
+  const response = await api.post<ServiceResponse>("/services", {
+    title,
+    amount,
+  });
 
-  return response.data;
+  return response.data.service;
 }
 
 export async function getServices() {
@@ -14,9 +17,18 @@ export async function getServices() {
 }
 
 export async function updateServiceStatus(id: string, active: boolean) {
-  await api.patch(`/services/${id}/status`, { active });
+  const response = await api.patch<ServiceResponse>(`/services/${id}/status`, {
+    active,
+  });
+
+  return response.data.service;
 }
 
 export async function updateService(id: string, title: string, amount: number) {
-  await api.patch(`/services/${id}`, { title, amount });
+  const response = await api.patch<ServiceResponse>(`/services/${id}`, {
+    title,
+    amount,
+  });
+
+  return response.data.service;
 }
