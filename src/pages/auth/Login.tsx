@@ -52,7 +52,6 @@ export function LoginPage() {
 
       return initialState;
     } catch (error) {
-      console.log(error);
       return {
         message: getErrorMessage(error, "Não foi possível entrar."),
         fields,

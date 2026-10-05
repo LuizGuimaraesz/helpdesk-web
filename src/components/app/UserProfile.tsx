@@ -1,6 +1,5 @@
 import { CircleUserRound, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { ChangePasswordForm } from "../profile/ChangePasswordForm";
 import { ProfileForm } from "../profile/ProfileForm";
 import { useAuth } from "../../hooks/useAuth";
@@ -14,7 +13,6 @@ export function UserProfile({
   avatarUrl,
   compact = false,
 }: UserProfileProps & { compact?: boolean }) {
-  const navigate = useNavigate();
   const { remove } = useAuth();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -23,7 +21,6 @@ export function UserProfile({
 
   function handleLogout() {
     remove();
-    navigate("/login");
   }
 
   function handleOpenProfile() {

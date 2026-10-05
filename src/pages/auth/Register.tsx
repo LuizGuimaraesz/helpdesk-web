@@ -54,7 +54,6 @@ export function RegisterPage() {
 
       return initialState;
     } catch (error) {
-      console.log(error);
       return {
         message: getErrorMessage(error, "Não foi possível criar sua conta."),
         fields,
@@ -133,7 +132,7 @@ export function RegisterPage() {
           <p className="text-muted text-xs leading-[1.4]">Acesse agora mesmo</p>
         </div>
 
-        <Button variant="white" onClick={() => navigate("/login")}>
+        <Button variant="white" onClick={() => navigate("/")}>
           Acessar conta
         </Button>
       </div>

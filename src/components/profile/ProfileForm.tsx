@@ -33,7 +33,7 @@ export function ProfileForm({
   email: initialEmail,
   avatarUrl,
 }: ProfileFormProps) {
-  const { session, save } = useAuth();
+  const { session, updateProfile } = useAuth();
   const [name, setName] = useState(initialName);
   const [email, setEmail] = useState(initialEmail);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -62,15 +62,13 @@ export function ProfileForm({
       const data = profileSchema.parse({ name, email });
 
       setIsSaving(true);
-      await updateUser(session.user.id, data.name, data.email);
+      const updatedUser = await updateUser(
+        session.user.id,
+        data.name,
+        data.email,
+      );
 
-      save({
-        ...session,
-        user: {
-          ...session.user,
-          ...data,
-        },
-      });
+      updateProfile(updatedUser, session.token);
 
       onClose();
     } catch (error) {
