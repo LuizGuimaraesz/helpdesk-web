@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TicketForm } from "../../components/tickets/TicketForm";
 import { ListHeader } from "../../components/ui/ListHeader";
@@ -12,53 +12,85 @@ import { getErrorMessage } from "../../utils/getErrorMessage";
 export function NewTicketPage() {
   const navigate = useNavigate();
   const { isLoading: isLoadingSession, session } = useAuth();
+  const userId = session?.user.id;
   const [services, setServices] = useState<Service[]>([]);
   const [isLoadingServices, setIsLoadingServices] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  async function loadServices() {
-    try {
-      setIsLoadingServices(true);
-      setErrorMessage(null);
-      const data = await getServices();
-
-      setServices(data.services.filter((service) => service.active));
-    } catch (error) {
-      setErrorMessage(
-        getErrorMessage(error, "Falha ao carregar as categorias de serviço."),
-      );
-    } finally {
-      setIsLoadingServices(false);
-    }
-  }
+  const loadControllerRef = useRef<AbortController | null>(null);
+  const isSubmittingRef = useRef(false);
 
   async function handleCreateTicket(data: CreateTicket) {
+    const controller = loadControllerRef.current;
+    if (
+      isSubmittingRef.current ||
+      isLoadingServices ||
+      !controller ||
+      controller.signal.aborted
+    ) {
+      return;
+    }
+
+    isSubmittingRef.current = true;
     try {
       setIsSubmitting(true);
       setErrorMessage(null);
       await createTicket(data);
 
-      navigate("/tickets");
+      if (!controller.signal.aborted) {
+        navigate("/tickets");
+      }
     } catch (error) {
-      setErrorMessage(getErrorMessage(error, "Não foi possível criar o chamado."));
+      if (!controller.signal.aborted) {
+        setErrorMessage(
+          getErrorMessage(error, "Não foi possível criar o chamado."),
+        );
+      }
     } finally {
-      setIsSubmitting(false);
+      if (!controller.signal.aborted) {
+        isSubmittingRef.current = false;
+        setIsSubmitting(false);
+      }
     }
   }
 
   useEffect(() => {
-    if (isLoadingSession) {
-      return;
+    const controller = new AbortController();
+    loadControllerRef.current = controller;
+    isSubmittingRef.current = false;
+    setIsSubmitting(false);
+    setServices([]);
+    setErrorMessage(null);
+
+    if (isLoadingSession || !userId) {
+      setIsLoadingServices(isLoadingSession);
+      return () => controller.abort();
     }
 
-    if (!session) {
-      setIsLoadingServices(false);
-      return;
+    setIsLoadingServices(true);
+
+    async function loadServices() {
+      try {
+        const data = await getServices(controller.signal);
+        if (!controller.signal.aborted) {
+          setServices(data.services.filter((service) => service.active));
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setErrorMessage(
+            getErrorMessage(error, "Falha ao carregar as categorias de serviço."),
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingServices(false);
+        }
+      }
     }
 
     loadServices();
-  }, [isLoadingSession, session]);
+    return () => controller.abort();
+  }, [isLoadingSession, userId]);
 
   if (isLoadingSession) {
     return <p className="text-muted text-sm">Carregando categorias...</p>;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TechnicianTicketCard } from "../../components/technicians/TechnicianTicketCard";
 import { TicketStatus } from "../../components/tickets/TicketStatus";
@@ -16,51 +16,86 @@ const sections: { status: Status; title: string }[] = [
 
 export function TechnicianTicketsPage() {
   const { isLoading: isLoadingSession, session } = useAuth();
+  const userId = session?.user.id;
   const navigate = useNavigate();
   const [tickets, setTickets] = useState<TicketApi[]>([]);
   const [isLoadingTickets, setIsLoadingTickets] = useState(true);
   const [updatingTicketId, setUpdatingTicketId] = useState<string | null>(null);
-
-  async function loadTickets(technicianId: string) {
-    try {
-      const data = await getTickets();
-      setTickets(
-        data.tickets.filter((ticket) => ticket.technician?.id === technicianId),
-      );
-    } catch (error) {
-      alert(getErrorMessage(error, "Falha ao carregar os chamados."));
-    } finally {
-      setIsLoadingTickets(false);
-    }
-  }
+  const loadControllerRef = useRef<AbortController | null>(null);
+  const isUpdatingRef = useRef(false);
 
   async function handleChangeStatus(ticketId: string, status: Status) {
-    if (updatingTicketId) {
+    const controller = loadControllerRef.current;
+    if (
+      isUpdatingRef.current ||
+      isLoadingTickets ||
+      !controller ||
+      controller.signal.aborted
+    ) {
       return;
     }
 
+    isUpdatingRef.current = true;
     try {
       setUpdatingTicketId(ticketId);
-      await updateTicketStatus(ticketId, status);
-      setTickets((currentTickets) =>
-        currentTickets.map((ticket) =>
-          ticket.id === ticketId ? { ...ticket, status } : ticket,
-        ),
-      );
+      const updatedTicket = await updateTicketStatus(ticketId, status);
+
+      if (!controller.signal.aborted) {
+        setTickets((currentTickets) =>
+          currentTickets.map((ticket) =>
+            ticket.id === ticketId ? updatedTicket : ticket,
+          ),
+        );
+      }
     } catch (error) {
-      alert(getErrorMessage(error, "Falha ao atualizar o status do chamado."));
+      if (!controller.signal.aborted) {
+        alert(getErrorMessage(error, "Falha ao atualizar o status do chamado."));
+      }
     } finally {
-      setUpdatingTicketId(null);
+      if (!controller.signal.aborted) {
+        isUpdatingRef.current = false;
+        setUpdatingTicketId(null);
+      }
     }
   }
 
   useEffect(() => {
-    if (isLoadingSession || !session) {
-      return;
+    const controller = new AbortController();
+    loadControllerRef.current = controller;
+    isUpdatingRef.current = false;
+    setUpdatingTicketId(null);
+    setTickets([]);
+
+    if (isLoadingSession || !userId) {
+      setIsLoadingTickets(isLoadingSession);
+      return () => controller.abort();
     }
 
-    loadTickets(session.user.id);
-  }, [isLoadingSession, session]);
+    const technicianId = userId;
+    setIsLoadingTickets(true);
+
+    async function loadTickets() {
+      try {
+        const data = await getTickets(controller.signal);
+        if (!controller.signal.aborted) {
+          setTickets(
+            data.tickets.filter((ticket) => ticket.technician?.id === technicianId),
+          );
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          alert(getErrorMessage(error, "Falha ao carregar os chamados."));
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingTickets(false);
+        }
+      }
+    }
+
+    loadTickets();
+    return () => controller.abort();
+  }, [isLoadingSession, userId]);
 
   return (
     <section
@@ -93,7 +128,7 @@ export function TechnicianTicketsPage() {
                     <TechnicianTicketCard
                       key={ticket.id}
                       ticket={ticket}
-                      isUpdating={updatingTicketId === ticket.id}
+                      isUpdating={updatingTicketId !== null}
                       onEdit={() => navigate(`/tickets/${ticket.id}`)}
                       onChangeStatus={(nextStatus) =>
                         handleChangeStatus(ticket.id, nextStatus)

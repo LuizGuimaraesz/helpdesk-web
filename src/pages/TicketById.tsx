@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TicketActions } from "../components/tickets/TicketActions";
 import { ServiceForm } from "../components/services/ServiceForm";
@@ -13,50 +13,16 @@ import {
   getTicket,
   updateTicketStatus,
 } from "../services/tickets";
-import type { TicketApi, TicketDetails, TicketStatus } from "../types/ticket";
-import { formatAmount } from "../utils/formatAmount";
-import { formatDate } from "../utils/formatDate";
+import type { TicketApi, TicketStatus } from "../types/ticket";
 import { getErrorMessage } from "../utils/getErrorMessage";
-
-function toTicketDetails(ticket: TicketApi): TicketDetails {
-  const baseAmount = formatAmount(ticket.initialService.amount);
-  const additionalServices = ticket.additionalServices ?? [];
-  const totalAmount = [
-    ticket.initialService.amount,
-    ...additionalServices.map((service) => service.amount),
-  ].reduce((total, amount) => {
-    const numericAmount = Number(amount);
-
-    return Number.isFinite(numericAmount) ? total + numericAmount : total;
-  }, 0);
-
-  return {
-    id: ticket.id,
-    number: String(ticket.number).padStart(5, "0"),
-    title: ticket.title,
-    description: ticket.description,
-    category: ticket.initialService.title,
-    createdAt: formatDate(ticket.createdAt),
-    updatedAt: formatDate(ticket.updatedAt),
-    client: ticket.client.name,
-    technician: {
-      name: ticket.technician?.name ?? "Sem técnico responsável",
-      email: ticket.technician?.email ?? "Não atribuído",
-    },
-    baseAmount,
-    additionalServices: additionalServices.map((service) => ({
-      ...service,
-      amount: formatAmount(service.amount),
-    })),
-    totalAmount: formatAmount(String(totalAmount)),
-    status: ticket.status,
-  };
-}
+import { toTicketDetails } from "../utils/toTicketDetails";
 
 type TicketByIdPageProps = {
   backTo?: string;
   showActions?: boolean;
 };
+
+type TicketAction = "status" | "add" | { deletingServiceId: string };
 
 export function TicketByIdPage({
   backTo = "/tickets",
@@ -64,23 +30,78 @@ export function TicketByIdPage({
 }: TicketByIdPageProps) {
   const { ticketId } = useParams<{ ticketId: string }>();
   const { isLoading: isAuthLoading, session } = useAuth();
-  const [ticket, setTicket] = useState<TicketDetails | null>(null);
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const userId = session?.user.id;
+  const [ticketData, setTicketData] = useState<TicketApi | null>(null);
+  const [isLoadingTicket, setIsLoadingTicket] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<TicketAction | null>(null);
   const [isAdditionalServiceModalOpen, setIsAdditionalServiceModalOpen] =
     useState(false);
-  const [isSavingAdditionalService, setIsSavingAdditionalService] =
-    useState(false);
-  const [deletingAdditionalServiceId, setDeletingAdditionalServiceId] =
-    useState<string | null>(null);
+  const loadControllerRef = useRef<AbortController | null>(null);
+  const isMutatingRef = useRef(false);
+  const ticket =
+    ticketData && ticketData.id === ticketId ? toTicketDetails(ticketData) : null;
 
-  async function loadTicket(id: string) {
-    try {
-      const data = await getTicket(id);
+  useEffect(() => {
+    const controller = new AbortController();
+    loadControllerRef.current = controller;
+    isMutatingRef.current = false;
+    setPendingAction(null);
+    setIsAdditionalServiceModalOpen(false);
+    setTicketData(null);
+    setErrorMessage(null);
 
-      setTicket(toTicketDetails(data.ticket));
-    } catch (error: any) {
-      console.log(error.message);
-      alert(getErrorMessage(error, "Falha ao carregar o chamado."));
+    if (isAuthLoading || !userId || !ticketId) {
+      setIsLoadingTicket(isAuthLoading);
+      return () => controller.abort();
+    }
+
+    const id = ticketId;
+    setIsLoadingTicket(true);
+
+    async function loadTicket() {
+      try {
+        const data = await getTicket(id, controller.signal);
+
+        if (!controller.signal.aborted) {
+          setTicketData(data.ticket);
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setErrorMessage(getErrorMessage(error, "Falha ao carregar o chamado."));
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingTicket(false);
+        }
+      }
+    }
+
+    loadTicket();
+    return () => controller.abort();
+  }, [isAuthLoading, userId, ticketId]);
+
+  function beginAction(action: TicketAction) {
+    const controller = loadControllerRef.current;
+
+    if (
+      !ticket ||
+      !controller ||
+      controller.signal.aborted ||
+      isMutatingRef.current
+    ) {
+      return null;
+    }
+
+    isMutatingRef.current = true;
+    setPendingAction(action);
+    return controller;
+  }
+
+  function finishAction(controller: AbortController) {
+    if (!controller.signal.aborted) {
+      isMutatingRef.current = false;
+      setPendingAction(null);
     }
   }
 
@@ -89,17 +110,23 @@ export function TicketByIdPage({
       return;
     }
 
-    try {
-      setIsUpdatingStatus(true);
-      await updateTicketStatus(ticket.id, status);
+    const controller = beginAction("status");
+    if (!controller) {
+      return;
+    }
 
-      setTicket((currentTicket) =>
-        currentTicket ? { ...currentTicket, status } : currentTicket,
-      );
+    try {
+      const updatedTicket = await updateTicketStatus(ticket.id, status);
+
+      if (!controller.signal.aborted) {
+        setTicketData(updatedTicket);
+      }
     } catch (error) {
-      alert(getErrorMessage(error, "Falha ao atualizar o status do chamado."));
+      if (!controller.signal.aborted) {
+        alert(getErrorMessage(error, "Falha ao atualizar o status do chamado."));
+      }
     } finally {
-      setIsUpdatingStatus(false);
+      finishAction(controller);
     }
   }
 
@@ -108,18 +135,34 @@ export function TicketByIdPage({
       return;
     }
 
+    const controller = beginAction("add");
+    if (!controller) {
+      return;
+    }
+
     try {
-      setIsSavingAdditionalService(true);
+      const service = await createAdditionalService(ticket.id, { title, amount });
 
-      await createAdditionalService(ticket.id, { title, amount });
-
-      const data = await getTicket(ticket.id);
-
-      setTicket(toTicketDetails(data.ticket));
-
-      setIsAdditionalServiceModalOpen(false);
+      if (!controller.signal.aborted) {
+        setTicketData((currentTicket) =>
+          currentTicket?.id === ticket.id
+            ? {
+                ...currentTicket,
+                additionalServices: [
+                  ...(currentTicket.additionalServices ?? []),
+                  service,
+                ],
+              }
+            : currentTicket,
+        );
+        setIsAdditionalServiceModalOpen(false);
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        throw error;
+      }
     } finally {
-      setIsSavingAdditionalService(false);
+      finishAction(controller);
     }
   }
 
@@ -128,28 +171,36 @@ export function TicketByIdPage({
       return;
     }
 
-    try {
-      setDeletingAdditionalServiceId(serviceId);
-      await deleteAdditionalService(ticket.id, serviceId);
-
-      const data = await getTicket(ticket.id);
-      setTicket(toTicketDetails(data.ticket));
-    } catch (error) {
-      alert(
-        getErrorMessage(error, "Não foi possível excluir o serviço adicional."),
-      );
-    } finally {
-      setDeletingAdditionalServiceId(null);
-    }
-  }
-
-  useEffect(() => {
-    if (isAuthLoading || !session || !ticketId) {
+    const controller = beginAction({ deletingServiceId: serviceId });
+    if (!controller) {
       return;
     }
 
-    loadTicket(ticketId);
-  }, [isAuthLoading, session, ticketId]);
+    try {
+      await deleteAdditionalService(ticket.id, serviceId);
+
+      if (!controller.signal.aborted) {
+        setTicketData((currentTicket) =>
+          currentTicket?.id === ticket.id
+            ? {
+                ...currentTicket,
+                additionalServices: (
+                  currentTicket.additionalServices ?? []
+                ).filter((service) => service.id !== serviceId),
+              }
+            : currentTicket,
+        );
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        alert(
+          getErrorMessage(error, "Não foi possível excluir o serviço adicional."),
+        );
+      }
+    } finally {
+      finishAction(controller);
+    }
+  }
 
   return (
     <section
@@ -177,11 +228,22 @@ export function TicketByIdPage({
         {showActions && ticket && (
           <TicketActions
             status={ticket.status}
-            isUpdating={isUpdatingStatus}
+            isUpdating={pendingAction !== null}
             onChangeStatus={handleChangeStatus}
           />
         )}
       </header>
+
+      {isLoadingTicket && (
+        <p role="status" className="text-muted text-sm">
+          Carregando chamado...
+        </p>
+      )}
+      {errorMessage && (
+        <p role="alert" className="text-feedback-error text-sm font-medium">
+          {errorMessage}
+        </p>
+      )}
 
       {ticket && (
         <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1.62fr)_minmax(245px,1fr)]">
@@ -190,7 +252,12 @@ export function TicketByIdPage({
             {session?.user.role === "technician" && (
               <TicketAdditionalServices
                 services={ticket.additionalServices}
-                deletingServiceId={deletingAdditionalServiceId}
+                deletingServiceId={
+                  typeof pendingAction === "object" && pendingAction
+                    ? pendingAction.deletingServiceId
+                    : null
+                }
+                isDisabled={pendingAction !== null}
                 onAdd={() => setIsAdditionalServiceModalOpen(true)}
                 onDelete={handleDeleteAdditionalService}
               />
@@ -202,9 +269,13 @@ export function TicketByIdPage({
 
       {session?.user.role === "technician" && (
         <ServiceForm
-          isOpen={isAdditionalServiceModalOpen}
-          isSaving={isSavingAdditionalService}
-          onClose={() => setIsAdditionalServiceModalOpen(false)}
+          isOpen={Boolean(ticket) && isAdditionalServiceModalOpen}
+          isSaving={pendingAction === "add"}
+          onClose={() => {
+            if (!isMutatingRef.current) {
+              setIsAdditionalServiceModalOpen(false);
+            }
+          }}
           onCreate={handleAddAdditionalService}
           createModalTitle="Serviço adicional"
         />

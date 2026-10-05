@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   TechnicianForm,
@@ -18,43 +18,64 @@ export function EditTechnicianPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { isLoading: isLoadingSession, session } = useAuth();
+  const userId = session?.user.id;
   const [technician, setTechnician] = useState<Technician | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  async function loadTechnician(technicianId: string) {
-    try {
-      setIsLoading(true);
-      setErrorMessage(null);
-      const data = await getUserById(technicianId);
-
-      setTechnician({ ...data, hours: data.hours ?? [] });
-    } catch (error) {
-      setErrorMessage(getErrorMessage(error, "Falha ao carregar o técnico."));
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const loadControllerRef = useRef<AbortController | null>(null);
+  const isSavingRef = useRef(false);
 
   useEffect(() => {
-    if (isLoadingSession) {
-      return;
+    const controller = new AbortController();
+    loadControllerRef.current = controller;
+    isSavingRef.current = false;
+    setIsSaving(false);
+    setTechnician(null);
+    setErrorMessage(null);
+
+    if (isLoadingSession || !userId || !id) {
+      setIsLoading(isLoadingSession);
+      return () => controller.abort();
     }
 
-    if (!session || !id) {
-      setIsLoading(false);
-      return;
+    const technicianId = id;
+    setIsLoading(true);
+
+    async function loadTechnician() {
+      try {
+        const data = await getUserById(technicianId, controller.signal);
+        if (!controller.signal.aborted) {
+          setTechnician({ ...data, hours: data.hours ?? [] });
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setErrorMessage(getErrorMessage(error, "Falha ao carregar o técnico."));
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
     }
 
-    loadTechnician(id);
-  }, [id, isLoadingSession, session]);
+    loadTechnician();
+    return () => controller.abort();
+  }, [id, isLoadingSession, userId]);
 
   async function handleUpdateTechnician(values: TechnicianFormValues) {
-    if (!id) {
+    const controller = loadControllerRef.current;
+    if (
+      !id ||
+      technician?.id !== id ||
+      !controller ||
+      controller.signal.aborted ||
+      isSavingRef.current
+    ) {
       return;
     }
 
+    isSavingRef.current = true;
     try {
       setIsSaving(true);
       setErrorMessage(null);
@@ -62,17 +83,28 @@ export function EditTechnicianPage() {
       await updateUser(id, values.name, values.email);
       await updateTechnicianHours(id, values.hours);
 
-      navigate("/technicians");
+      if (!controller.signal.aborted) {
+        navigate("/technicians");
+      }
     } catch (error) {
-      setErrorMessage(
-        getErrorMessage(error, "Não foi possível atualizar o técnico."),
-      );
+      if (!controller.signal.aborted) {
+        setErrorMessage(
+          getErrorMessage(error, "Não foi possível atualizar o técnico."),
+        );
+      }
     } finally {
-      setIsSaving(false);
+      if (!controller.signal.aborted) {
+        isSavingRef.current = false;
+        setIsSaving(false);
+      }
     }
   }
 
-  if (isLoadingSession || isLoading) {
+  if (
+    isLoadingSession ||
+    isLoading ||
+    (technician && technician.id !== id)
+  ) {
     return <p className="text-muted text-sm">Carregando técnico...</p>;
   }
 

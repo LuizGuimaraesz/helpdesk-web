@@ -2,6 +2,7 @@ import { CircleCheckBig, Clock3 } from "lucide-react";
 import type { TicketApi, TicketStatus as Status } from "../../types/ticket";
 import { formatAmount } from "../../utils/formatAmount";
 import { formatDate } from "../../utils/formatDate";
+import { getTicketTotal } from "../../utils/getTicketTotal";
 import { TicketStatus } from "../tickets/TicketStatus";
 import { Button } from "../ui/Button";
 import { EditButton } from "../ui/EditButton";
@@ -57,7 +58,7 @@ export function TechnicianTicketCard({
       <div className="text-foreground mt-4 flex items-center justify-between gap-2 text-xs leading-[1.4]">
         <time dateTime={ticket.createdAt}>{formatDate(ticket.createdAt)}</time>
         <span className="shrink-0">
-          {formatAmount(ticket.initialService?.amount ?? "0")}
+          {formatAmount(String(getTicketTotal(ticket)))}
         </span>
       </div>
 

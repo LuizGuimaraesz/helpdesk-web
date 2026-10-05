@@ -21,8 +21,8 @@ export async function getUsers(role: "client" | "technician") {
   return response.data;
 }
 
-export async function getUserById(id: string) {
-  const response = await api.get<UserResponse>(`/users/${id}`);
+export async function getUserById(id: string, signal?: AbortSignal) {
+  const response = await api.get<UserResponse>(`/users/${id}`, { signal });
 
   return response.data.user;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { ServicesList } from "../../components/services/ServicesList";
 import { ServiceForm } from "../../components/services/ServiceForm";
@@ -16,20 +16,30 @@ import { getErrorMessage } from "../../utils/getErrorMessage";
 
 export function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
-  const [updatingServiceId, setUpdatingServiceId] = useState<string | null>(
-    null,
-  );
+  const [updatingServiceId, setUpdatingServiceId] = useState<string | null>(null);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isSavingService, setIsSavingService] = useState(false);
+  const [isLoadingServices, setIsLoadingServices] = useState(true);
   const { isLoading, session } = useAuth();
+  const userId = session?.user.id;
+  const loadControllerRef = useRef<AbortController | null>(null);
+  const isMutatingRef = useRef(false);
+  const isBusy =
+    isLoadingServices || isSavingService || updatingServiceId !== null;
 
   function handleOpenCreateServiceModal() {
+    if (isBusy || isMutatingRef.current) {
+      return;
+    }
     setSelectedService(null);
     setIsServiceModalOpen(true);
   }
 
   function handleOpenEditServiceModal(service: Service) {
+    if (isBusy || isMutatingRef.current) {
+      return;
+    }
     setSelectedService(service);
     setIsServiceModalOpen(true);
   }
@@ -39,13 +49,25 @@ export function ServicesPage() {
     setSelectedService(null);
   }
 
-  async function loadServices() {
-    try {
-      const data = await getServices();
+  function beginMutation() {
+    const controller = loadControllerRef.current;
+    if (
+      isLoadingServices ||
+      isMutatingRef.current ||
+      !controller ||
+      controller.signal.aborted
+    ) {
+      return null;
+    }
+    isMutatingRef.current = true;
+    return controller;
+  }
 
-      setServices(data.services);
-    } catch (error) {
-      alert(getErrorMessage(error, "Falha ao carregar os serviços."));
+  function finishMutation(controller: AbortController) {
+    if (!controller.signal.aborted) {
+      isMutatingRef.current = false;
+      setUpdatingServiceId(null);
+      setIsSavingService(false);
     }
   }
 
@@ -53,64 +75,122 @@ export function ServicesPage() {
     const service = services.find(
       (currentService) => currentService.id === serviceId,
     );
-
     if (!service) {
+      return;
+    }
+    const controller = beginMutation();
+    if (!controller) {
       return;
     }
 
     try {
       setUpdatingServiceId(serviceId);
-      await updateServiceStatus(serviceId, !service.active);
-
-      setServices((currentServices) =>
-        currentServices.map((currentService) =>
-          currentService.id === serviceId
-            ? { ...currentService, active: !currentService.active }
-            : currentService,
-        ),
+      const updatedService = await updateServiceStatus(
+        serviceId,
+        !service.active,
       );
+
+      if (!controller.signal.aborted) {
+        setServices((currentServices) =>
+          currentServices.map((currentService) =>
+            currentService.id === serviceId ? updatedService : currentService,
+          ),
+        );
+      }
     } catch (error) {
-      alert(getErrorMessage(error, "Falha ao atualizar o status do serviço."));
+      if (!controller.signal.aborted) {
+        alert(getErrorMessage(error, "Falha ao atualizar o status do serviço."));
+      }
     } finally {
-      setUpdatingServiceId(null);
+      finishMutation(controller);
     }
   }
 
   async function handleCreateService(title: string, amount: number) {
+    const controller = beginMutation();
+    if (!controller) {
+      return;
+    }
+
     try {
       setIsSavingService(true);
-      await createService(title, amount);
+      const service = await createService(title, amount);
 
-      handleCloseServiceModal();
-      await loadServices();
+      if (!controller.signal.aborted) {
+        setServices((currentServices) => [...currentServices, service]);
+        handleCloseServiceModal();
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        throw error;
+      }
     } finally {
-      setIsSavingService(false);
+      finishMutation(controller);
     }
   }
 
-  async function handleUpdateService(
-    id: string,
-    title: string,
-    amount: number,
-  ) {
+  async function handleUpdateService(id: string, title: string, amount: number) {
+    const controller = beginMutation();
+    if (!controller) {
+      return;
+    }
+
     try {
       setIsSavingService(true);
-      await updateService(id, title, amount);
+      const updatedService = await updateService(id, title, amount);
 
-      handleCloseServiceModal();
-      await loadServices();
+      if (!controller.signal.aborted) {
+        setServices((currentServices) =>
+          currentServices.map((service) =>
+            service.id === id ? updatedService : service,
+          ),
+        );
+        handleCloseServiceModal();
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        throw error;
+      }
     } finally {
-      setIsSavingService(false);
+      finishMutation(controller);
     }
   }
 
   useEffect(() => {
-    if (isLoading || !session) {
-      return;
+    const controller = new AbortController();
+    loadControllerRef.current = controller;
+    isMutatingRef.current = false;
+    setUpdatingServiceId(null);
+    setIsSavingService(false);
+    setServices([]);
+    handleCloseServiceModal();
+
+    if (isLoading || !userId) {
+      setIsLoadingServices(isLoading);
+      return () => controller.abort();
+    }
+
+    setIsLoadingServices(true);
+    async function loadServices() {
+      try {
+        const data = await getServices(controller.signal);
+        if (!controller.signal.aborted) {
+          setServices(data.services);
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          alert(getErrorMessage(error, "Falha ao carregar os serviços."));
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingServices(false);
+        }
+      }
     }
 
     loadServices();
-  }, [isLoading, session]);
+    return () => controller.abort();
+  }, [isLoading, userId]);
 
   return (
     <section
@@ -123,15 +203,23 @@ export function ServicesPage() {
           iconOnlyMobile
           className="w-auto max-md:size-10"
           aria-label="Novo serviço"
+          disabled={isBusy}
           onClick={handleOpenCreateServiceModal}
         >
           Novo
         </Button>
       </ListHeader>
 
+      {isLoadingServices && (
+        <p role="status" className="text-muted text-sm">
+          Carregando serviços...
+        </p>
+      )}
+
       <ServicesList
         services={services}
         updatingServiceId={updatingServiceId}
+        isDisabled={isBusy}
         onEditService={handleOpenEditServiceModal}
         onToggleServiceStatus={(service) =>
           handleToggleServiceStatus(service.id)
@@ -141,7 +229,11 @@ export function ServicesPage() {
       <ServiceForm
         isOpen={isServiceModalOpen}
         service={selectedService}
-        onClose={handleCloseServiceModal}
+        onClose={() => {
+          if (!isMutatingRef.current) {
+            handleCloseServiceModal();
+          }
+        }}
         onCreate={handleCreateService}
         onUpdate={handleUpdateService}
         isSaving={isSavingService}

@@ -6,6 +6,7 @@ import { EditButton } from "../ui/EditButton";
 type TicketAdditionalServicesProps = {
   services: TicketAdditionalService[];
   deletingServiceId?: string | null;
+  isDisabled?: boolean;
   onAdd: () => void;
   onDelete: (serviceId: string) => void;
 };
@@ -13,6 +14,7 @@ type TicketAdditionalServicesProps = {
 export function TicketAdditionalServices({
   services,
   deletingServiceId = null,
+  isDisabled = false,
   onAdd,
   onDelete,
 }: TicketAdditionalServicesProps) {
@@ -26,6 +28,7 @@ export function TicketAdditionalServices({
           icon={Plus}
           aria-label="Adicionar serviço ao chamado"
           onClick={onAdd}
+          disabled={isDisabled}
           className="h-7 w-7 shrink-0 p-0"
         />
       </header>
@@ -47,7 +50,7 @@ export function TicketAdditionalServices({
                 variant="delete"
                 aria-label={`Excluir serviço adicional ${service.title}`}
                 className="ml-2 shrink-0"
-                disabled={deletingServiceId === service.id}
+                disabled={isDisabled || deletingServiceId === service.id}
                 onClick={() => onDelete(service.id)}
               />
             </li>

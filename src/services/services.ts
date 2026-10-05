@@ -10,8 +10,8 @@ export async function createService(title: string, amount: number) {
   return response.data.service;
 }
 
-export async function getServices() {
-  const response = await api.get<ServicesResponse>("/services");
+export async function getServices(signal?: AbortSignal) {
+  const response = await api.get<ServicesResponse>("/services", { signal });
 
   return response.data;
 }

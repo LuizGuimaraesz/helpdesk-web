@@ -7,6 +7,7 @@ import { ServiceStatus } from "./ServiceStatus";
 type ServiceRowProps = {
   service: Service;
   isUpdatingStatus?: boolean;
+  isDisabled?: boolean;
   onEdit?: (service: Service) => void;
   onToggleStatus?: (service: Service) => Promise<void>;
 };
@@ -14,6 +15,7 @@ type ServiceRowProps = {
 export function ServiceRow({
   service,
   isUpdatingStatus = false,
+  isDisabled = false,
   onEdit,
   onToggleStatus,
 }: ServiceRowProps) {
@@ -36,7 +38,7 @@ export function ServiceRow({
       <td className="px-1 text-center md:px-3">
         <button
           type="button"
-          disabled={isUpdatingStatus}
+          disabled={isDisabled || isUpdatingStatus}
           className="text-muted hover:text-foreground focus-visible:outline-brand mx-auto inline-flex cursor-pointer items-center gap-2 rounded-sm text-xs leading-[1.4] whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={`${service.active ? "Desativar" : "Reativar"} o serviço ${service.title}`}
           onClick={
@@ -57,6 +59,7 @@ export function ServiceRow({
       <td className="px-1.5 text-center md:px-3">
         <EditButton
           aria-label={`Editar o serviço ${service.title}`}
+          disabled={isDisabled}
           onClick={onEdit ? () => onEdit(service) : undefined}
           className="size-7"
         />

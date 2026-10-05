@@ -4,6 +4,7 @@ import { ServiceRow } from "./ServiceRow";
 type ServicesListProps = {
   services: Service[];
   updatingServiceId?: string | null;
+  isDisabled?: boolean;
   onEditService?: (service: Service) => void;
   onToggleServiceStatus?: (service: Service) => Promise<void>;
 };
@@ -11,6 +12,7 @@ type ServicesListProps = {
 export function ServicesList({
   services,
   updatingServiceId,
+  isDisabled = false,
   onEditService,
   onToggleServiceStatus,
 }: ServicesListProps) {
@@ -53,6 +55,7 @@ export function ServicesList({
               key={service.id}
               service={service}
               isUpdatingStatus={service.id === updatingServiceId}
+              isDisabled={isDisabled}
               onEdit={onEditService}
               onToggleStatus={onToggleServiceStatus}
             />

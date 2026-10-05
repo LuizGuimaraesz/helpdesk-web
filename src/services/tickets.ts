@@ -21,14 +21,14 @@ export async function createTicket({
   return response.data.ticket;
 }
 
-export async function getTickets() {
-  const response = await api.get<TicketsResponse>("/tickets");
+export async function getTickets(signal?: AbortSignal) {
+  const response = await api.get<TicketsResponse>("/tickets", { signal });
 
   return response.data;
 }
 
-export async function getTicket(id: string) {
-  const response = await api.get<TicketResponse>(`/tickets/${id}`);
+export async function getTicket(id: string, signal?: AbortSignal) {
+  const response = await api.get<TicketResponse>(`/tickets/${id}`, { signal });
 
   return response.data;
 }

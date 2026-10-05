@@ -56,6 +56,9 @@ export function ServiceForm({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSaving) {
+      return;
+    }
     setErrorMessage(null);
 
     const result = serviceSchema.safeParse({ title, amount });
@@ -93,6 +96,7 @@ export function ServiceForm({
             label={"Título"}
             placeholder={"Nome do serviço"}
             value={title}
+            disabled={isSaving}
             onChange={(event) => setTitle(event.target.value)}
             containerClassName="pt-0"
             required
@@ -102,6 +106,7 @@ export function ServiceForm({
             label="Valor"
             placeholder="0,00"
             value={amount}
+            disabled={isSaving}
             onChange={(event) =>
               setAmount(formatAmountInput(event.target.value))
             }
