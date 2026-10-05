@@ -3,12 +3,14 @@ import { ClientRow } from "./ClientRow";
 
 type ClientsListProps = {
   clients: User[];
+  isDisabled?: boolean;
   onDeleteClient?: (client: User) => void;
   onEditClient?: (client: User) => void;
 };
 
 export function ClientsList({
   clients,
+  isDisabled = false,
   onDeleteClient,
   onEditClient,
 }: ClientsListProps) {
@@ -42,6 +44,7 @@ export function ClientsList({
             <ClientRow
               key={client.id}
               client={client}
+              isDisabled={isDisabled}
               onDelete={onDeleteClient}
               onEdit={onEditClient}
             />

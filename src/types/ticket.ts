@@ -33,12 +33,13 @@ export type TicketApi = {
   } | null;
 
   initialService: {
-    serviceId: string;
+    id: string;
+    serviceId: string | null;
     title: string;
     amount: string;
   };
 
-  additionalServices?: TicketAdditionalService[];
+  additionalServices: TicketAdditionalService[];
 };
 
 export type TicketsResponse = {

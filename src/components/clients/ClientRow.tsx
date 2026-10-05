@@ -4,11 +4,17 @@ import { UserInfo } from "../ui/UserInfo";
 
 type ClientRowProps = {
   client: User;
+  isDisabled?: boolean;
   onDelete?: (client: User) => void;
   onEdit?: (client: User) => void;
 };
 
-export function ClientRow({ client, onDelete, onEdit }: ClientRowProps) {
+export function ClientRow({
+  client,
+  isDisabled = false,
+  onDelete,
+  onEdit,
+}: ClientRowProps) {
   return (
     <tr className="border-border h-14 border-b last:border-b-0 md:h-16">
       <td className="min-w-0 px-2 md:px-3">
@@ -24,11 +30,13 @@ export function ClientRow({ client, onDelete, onEdit }: ClientRowProps) {
           <EditButton
             variant="delete"
             aria-label={`Excluir o cliente ${client.name}`}
+            disabled={isDisabled}
             onClick={onDelete ? () => onDelete(client) : undefined}
             className="size-7"
           />
           <EditButton
             aria-label={`Editar o cliente ${client.name}`}
+            disabled={isDisabled}
             onClick={onEdit ? () => onEdit(client) : undefined}
             className="size-7"
           />

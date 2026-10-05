@@ -7,23 +7,29 @@ import { Input } from "../ui/Input";
 import { Modal } from "../ui/Modal";
 import { Button } from "../ui/Button";
 
-const serviceSchema = z.object({
+const amountSchema = z
+  .string()
+  .trim()
+  .min(1, "Informe um valor válido para o serviço.")
+  .transform((value) => Number(value.replace(",", ".")))
+  .pipe(z.number().finite("Informe um valor válido para o serviço."));
+
+const catalogServiceSchema = z.object({
+  title: z.string().trim().min(2, "O título deve ter pelo menos 2 caracteres."),
+  amount: amountSchema.pipe(z.number().min(1, "O valor mínimo é R$ 1,00.")),
+});
+
+const additionalServiceSchema = z.object({
   title: z.string().trim().min(1, "Informe o título do serviço."),
-  amount: z
-    .string()
-    .min(1, "Informe um valor válido para o serviço.")
-    .transform((value) => Number(value.replace(",", ".")))
-    .pipe(
-      z
-        .number()
-        .finite("Informe um valor válido para o serviço.")
-        .positive("O valor deve ser maior que zero."),
-    ),
+  amount: amountSchema.pipe(
+    z.number().positive("O valor deve ser maior que zero."),
+  ),
 });
 
 type ServiceFormProps = {
   isOpen: boolean;
   service?: Service | null;
+  purpose?: "catalog" | "additional";
   createModalTitle?: string;
   onClose: () => void;
   onCreate: (title: string, amount: number) => Promise<void>;
@@ -34,6 +40,7 @@ type ServiceFormProps = {
 export function ServiceForm({
   isOpen,
   service = null,
+  purpose = "catalog",
   createModalTitle = "Cadastro de serviço",
   onClose,
   onCreate,
@@ -52,7 +59,7 @@ export function ServiceForm({
     setTitle(service?.title ?? "");
     setAmount(service?.amount.replace(".", ",") ?? "");
     setErrorMessage(null);
-  }, [isOpen, service]);
+  }, [isOpen, service, purpose]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,7 +68,9 @@ export function ServiceForm({
     }
     setErrorMessage(null);
 
-    const result = serviceSchema.safeParse({ title, amount });
+    const schema =
+      purpose === "additional" ? additionalServiceSchema : catalogServiceSchema;
+    const result = schema.safeParse({ title, amount });
 
     if (!result.success) {
       setErrorMessage(
@@ -71,7 +80,11 @@ export function ServiceForm({
     }
 
     try {
-      if (service && onUpdate) {
+      if (service) {
+        if (!onUpdate) {
+          setErrorMessage("Não foi possível atualizar o serviço.");
+          return;
+        }
         await onUpdate(service.id, result.data.title, result.data.amount);
         return;
       }

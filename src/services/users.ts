@@ -13,9 +13,13 @@ export async function createUser(data: CreateUserParams) {
   return response.data.user;
 }
 
-export async function getUsers(role: "client" | "technician") {
+export async function getUsers(
+  role: "client" | "technician",
+  signal?: AbortSignal,
+) {
   const response = await api.get<UsersResponse>("/users", {
     params: { role },
+    signal,
   });
 
   return response.data;

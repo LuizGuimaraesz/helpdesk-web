@@ -45,7 +45,7 @@ export function ClientForm({
     event.preventDefault();
     setErrorMessage(null);
 
-    if (!client) {
+    if (!client || isSaving) {
       return;
     }
 
@@ -85,6 +85,7 @@ export function ClientForm({
             label="Nome"
             placeholder="Nome do cliente"
             value={name}
+            disabled={isSaving}
             onChange={(event) => setName(event.target.value)}
             containerClassName="border-border border-b pt-0 pb-3"
             required
@@ -95,6 +96,7 @@ export function ClientForm({
             type="email"
             placeholder="E-mail do cliente"
             value={email}
+            disabled={isSaving}
             onChange={(event) => setEmail(event.target.value)}
             containerClassName="border-border border-b py-3"
             required

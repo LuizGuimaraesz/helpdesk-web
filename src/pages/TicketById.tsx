@@ -269,6 +269,7 @@ export function TicketByIdPage({
 
       {session?.user.role === "technician" && (
         <ServiceForm
+          purpose="additional"
           isOpen={Boolean(ticket) && isAdditionalServiceModalOpen}
           isSaving={pendingAction === "add"}
           onClose={() => {
