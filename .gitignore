@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Environment and deployment files
+.env
+.env.*
+!.env.example
+!.env.production
+.vercel
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
